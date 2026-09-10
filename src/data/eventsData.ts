@@ -1,0 +1,111 @@
+import { EventItem } from '../types';
+
+export const eventsData: EventItem[] = [
+  {
+    id: 'hackora',
+    name: 'HACKORA 2026',
+    tagline: 'HACK THE AURA!',
+    subtitle: '24-Hour National Hackathon',
+    description:
+      'A premier 24-hour national hackathon where teams solve real-world problems, build working software/hardware solutions, and demonstrate their technical skills under continuous live execution.',
+    teamSize: '2–4 Members',
+    fee: '₹1,200 / team',
+    prizePool: '₹35,000',
+    firstPrize: '₹25,000',
+    secondPrize: '₹10,000',
+    format: '24-Hour Continuous Offline Hackathon (21 Sep 11:00 AM – 22 Sep 11:00 AM)',
+    iconName: 'Zap',
+    colorTheme: 'cyan',
+    accentBadge: 'Flagship 24H Sprint',
+    highlights: [
+      'Open innovation tracks across 6 official themes',
+      'Mentorship sessions throughout the 24-hour sprint',
+      'Special citations for Best UI/UX, Most Innovative, and Best Technical Architecture',
+      'Direct pitch opportunities to startup incubators and VC networks',
+      'Official VTU-affiliated Certificate of Participation for all verified builders',
+    ],
+    rules: [
+      'Each team must consist of 2–4 members (inter-college teams permitted).',
+      'Each participant can belong to only ONE active team.',
+      'All code must be authored during the 24-hour sprint. Open-source libraries permitted.',
+      'Strictly NO online code submission / GitHub upload. All teams must bring working prototypes and laptops to LAEC campus on 22 September.',
+      'Participants must present valid college ID cards or USN credentials at check-in.',
+      'The jury decision will be final and binding.',
+    ],
+  },
+  {
+    id: 'ideathon',
+    name: 'IDEATHON 2026',
+    tagline: 'THINK IT. PITCH IT. CHANGE IT.',
+    subtitle: 'Ideate & Pitch Solutions',
+    description:
+      'Develop an innovative solution to a real-world problem and present your idea with clarity, creativity, and conviction before an expert jury of industry leaders and researchers.',
+    teamSize: '1–2 Members',
+    fee: '₹250 / team',
+    prizePool: '₹5,000+',
+    firstPrize: '₹3,000',
+    secondPrize: '₹2,000',
+    format: 'Idea Concept Deck & Live Jury Pitch',
+    iconName: 'Lightbulb',
+    colorTheme: 'purple',
+    accentBadge: 'Pitch Competition',
+    highlights: [
+      'Present to industry leaders and academic evaluators',
+      'Refine problem definition, market feasibility, and execution roadmap',
+      'Citations for most innovative business model and societal impact',
+      'Official Certificate of Participation for all presenters',
+    ],
+    rules: [
+      'Each team must consist of 1–2 members.',
+      'The idea should solve a clearly defined real-world problem.',
+      'Participants must present their solution deck within the allotted time (5-minute pitch + 3-minute Q&A).',
+      'Originality, feasibility, innovation, and impact will be evaluated.',
+      'The jury decision will be final.',
+    ],
+  },
+  {
+    id: 'expo',
+    name: 'PROJECT EXPO 2026',
+    tagline: 'SHOWCASE. INSPIRE. CREATE IMPACT.',
+    subtitle: 'Project Exhibition 2026',
+    description:
+      'Exhibit your working hardware model, software system, or research project directly to industry evaluators, faculty experts, and peer innovators at the LAEC campus.',
+    teamSize: '1–2 Members',
+    fee: '₹300 / team',
+    prizePool: '₹5,000+',
+    firstPrize: '₹3,000',
+    secondPrize: '₹2,000',
+    format: 'In-Person Hardware & Software Physical Showcase',
+    iconName: 'Box',
+    colorTheme: 'emerald',
+    accentBadge: 'Exhibition & Demo',
+    highlights: [
+      'Dedicated booth table with power access in the LAEC exhibition hall',
+      'Live interactive demonstration to visiting jury panels',
+      'Hardware, embedded IoT, and mechanical models actively encouraged',
+      'Official Certificate of Participation and Project Recognition',
+    ],
+    rules: [
+      'Each team must consist of 1–2 members.',
+      'Projects must be functional and demonstrated live before the jury.',
+      'Teams must bring all required hardware, sensors, laptops, and cables.',
+      'Slide deck (PPT) must accompany the demonstration.',
+      'The jury decision will be final.',
+    ],
+  },
+];
+
+export const consolidatedPrizes = {
+  totalPool: '₹45,000+',
+  hackora: '₹35,000 (1st: ₹25,000, 2nd: ₹10,000)',
+  ideathon: '₹5,000+ (1st: ₹3,000, 2nd: ₹2,000)',
+  expo: '₹5,000+ (1st: ₹3,000, 2nd: ₹2,000)',
+  specialRecognitions: [
+    { label: 'Best UI / UX', icon: 'Sparkles', color: 'text-cyan-400' },
+    { label: 'All-Women Team', icon: 'Users', color: 'text-purple-400' },
+    { label: 'Most Innovative', icon: 'Star', color: 'text-amber-400' },
+    { label: 'Best Architecture', icon: 'Cpu', color: 'text-blue-400' },
+    { label: 'VTU Certificate', icon: 'FileCheck', color: 'text-emerald-400' },
+  ],
+};
+

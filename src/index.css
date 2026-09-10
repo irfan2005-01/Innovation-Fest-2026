@@ -1,0 +1,222 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Dark mode scrollbar */
+  html.dark ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  html.dark ::-webkit-scrollbar-track {
+    background: #050814;
+  }
+  html.dark ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 9999px;
+    border: 2px solid #050814;
+  }
+  html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #8b5cf6;
+  }
+
+  /* Light mode scrollbar */
+  html.light ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  html.light ::-webkit-scrollbar-track {
+    background: #f8fafc;
+  }
+  html.light ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+    border: 2px solid #f8fafc;
+  }
+  html.light ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+html.dark body {
+  background-color: #050816;
+  color: #f1f5f9;
+}
+
+/* Comprehensive Light Mode Global Theme Overrides */
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Background replacements */
+html.light .bg-obsidian-950 {
+  background-color: transparent !important;
+}
+
+html.light .bg-obsidian-900,
+html.light .bg-obsidian-900\/40,
+html.light .bg-obsidian-900\/60,
+html.light .bg-obsidian-900\/90,
+html.light .bg-obsidian-900\/95 {
+  background-color: #ffffff !important;
+}
+
+html.light .bg-slate-900,
+html.light .bg-slate-900\/40,
+html.light .bg-slate-900\/50,
+html.light .bg-slate-900\/60,
+html.light .bg-slate-900\/70,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/90,
+html.light .bg-slate-900\/95 {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+}
+
+html.light .bg-slate-950,
+html.light .bg-slate-950\/60,
+html.light .bg-slate-950\/70,
+html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/90 {
+  background-color: #f1f5f9 !important;
+}
+
+html.light .bg-slate-850,
+html.light .bg-slate-850\/60,
+html.light .bg-slate-850\/80,
+html.light .bg-slate-800,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/70,
+html.light .bg-slate-800\/80,
+html.light .bg-slate-800\/90 {
+  background-color: #f1f5f9 !important;
+}
+
+/* Border replacements */
+html.light .border-slate-800,
+html.light .border-slate-800\/60,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/90,
+html.light .border-slate-700,
+html.light .border-slate-700\/60,
+html.light .border-slate-700\/70,
+html.light .border-slate-700\/80,
+html.light .border-slate-700\/90,
+html.light .border-slate-600 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Text replacements */
+html.light .text-white {
+  color: #0f172a !important;
+}
+
+html.light .text-slate-100,
+html.light .text-slate-200 {
+  color: #1e293b !important;
+}
+
+html.light .text-slate-300 {
+  color: #334155 !important;
+}
+
+html.light .text-slate-400 {
+  color: #64748b !important;
+}
+
+html.light .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+html.light .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+/* Ensure buttons keep proper contrast */
+html.light .bg-brand-gradient {
+  color: #020617 !important;
+}
+
+html.light .bg-grid-pattern {
+  background-image: linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+}
+
+@layer utilities {
+  /* Grid pattern backdrop */
+  .bg-grid-pattern {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .bg-grid-dense {
+    background-image: linear-gradient(to right, rgba(0, 242, 254, 0.05) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Glassmorphism primitives */
+  .glass-card {
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(51, 65, 85, 0.6);
+  }
+
+  .glass-card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .glass-card-hover:hover {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: rgba(0, 242, 254, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px -10px rgba(0, 242, 254, 0.15);
+  }
+
+  /* Radial ambient glows */
+  .glow-cyan {
+    filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.4));
+  }
+  
+  .glow-violet {
+    filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4));
+  }
+
+  .glow-orange {
+    filter: drop-shadow(0 0 15px rgba(249, 115, 22, 0.4));
+  }
+
+  /* Gradient text */
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #00F2FE 0%, #8B5CF6 50%, #F97316 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-cyan {
+    background: linear-gradient(135deg, #00F2FE 0%, #38BDF8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-violet {
+    background: linear-gradient(135deg, #A78BFA 0%, #C084FC 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
