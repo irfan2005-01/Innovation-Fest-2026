@@ -49,12 +49,23 @@ export interface PaymentCardProps {
   className?: string;
 }
 
-const OFFICIAL_UPI_ID =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_UPI_ID) ||
-  'sshoeib17-4@okhdfcbank';
-const OFFICIAL_PAYEE =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_UPI_NAME) ||
-  'Lingaraj Appa Engineering College';
+// Resolve the active verified UPI ID
+// Explicitly ignores the obsolete/broken 'cnrb' ID even if set in Vercel's Environment Variables dashboard
+const getActiveUpi = () => {
+  const envUpi = typeof import.meta !== 'undefined' ? import.meta.env?.VITE_UPI_ID : '';
+  if (envUpi && !envUpi.includes('cnrb') && envUpi.includes('@')) {
+    return {
+      upiId: envUpi.trim(),
+      payee: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_UPI_NAME) || 'Shoeib',
+    };
+  }
+  return {
+    upiId: 'sshoeib17-4@okhdfcbank',
+    payee: 'Shoeib',
+  };
+};
+
+const { upiId: OFFICIAL_UPI_ID, payee: OFFICIAL_PAYEE } = getActiveUpi();
 
 export const PaymentCard: React.FC<PaymentCardProps> = ({
   event,
@@ -97,16 +108,17 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
 
   // Generate dynamic QR Code for payment
   useEffect(() => {
-    const safeTeam = encodeURIComponent((teamName || 'LAEC-TEAM').replace(/\s+/g, '-'));
+    // Keep transaction note clean & alphanumeric for NPCI parser compatibility
+    const safeTeam = (teamName || 'FEST').replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
+    const formattedAmount = Number(event.feeNumber).toFixed(2);
     const upiUri = `upi://pay?pa=${encodeURIComponent(
       OFFICIAL_UPI_ID
-    )}&pn=${encodeURIComponent(OFFICIAL_PAYEE)}&am=${
-      event.feeNumber
-    }&cu=INR&tn=REG-${safeTeam}`;
+    )}&pn=${encodeURIComponent(OFFICIAL_PAYEE)}&am=${formattedAmount}&cu=INR&tn=REG-${safeTeam}`;
 
     QRCode.toDataURL(upiUri, {
-      width: 260,
-      margin: 1,
+      width: 300,
+      margin: 2,
+      errorCorrectionLevel: 'M',
       color: {
         dark: '#000000',
         light: '#ffffff',
@@ -307,12 +319,11 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   };
 
   const isUtrInvalid = utrTouched && utrNumber.length > 0 && utrNumber.length !== 12;
-  const safeTeamName = encodeURIComponent((teamName || 'LAEC-TEAM').replace(/\s+/g, '-'));
+  const safeTeamName = (teamName || 'FEST').replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
+  const formattedAmount = Number(event.feeNumber).toFixed(2);
   const directUpiIntentUrl = `upi://pay?pa=${encodeURIComponent(
     OFFICIAL_UPI_ID
-  )}&pn=${encodeURIComponent(OFFICIAL_PAYEE)}&am=${
-    event.feeNumber
-  }&cu=INR&tn=REG-${safeTeamName}`;
+  )}&pn=${encodeURIComponent(OFFICIAL_PAYEE)}&am=${formattedAmount}&cu=INR&tn=REG-${safeTeamName}`;
 
   return (
     <div className={`space-y-4 ${className}`}>
