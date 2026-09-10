@@ -529,8 +529,6 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
               <span className="text-slate-600">//</span>
               <span className="text-amber-300 font-bold">₹45,000+ CONSOLIDATED CASH PRIZE POOL</span>
               <span className="text-slate-600">//</span>
-              <span>OFFICIAL TITLE SPONSOR: ROTARY SILVER CLUB</span>
-              <span className="text-slate-600">//</span>
               <span className="text-emerald-400 font-bold">VTU AFFILIATED & LAEC HOSTED</span>
               <span className="text-slate-600">//</span>
               <span>CERTIFICATES OF PARTICIPATION FOR ALL BUILDERS</span>
@@ -545,8 +543,6 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
               <span>24 HOURS CONTINUOUS SPRINT</span>
               <span className="text-slate-600">//</span>
               <span className="text-amber-300 font-bold">₹45,000+ CONSOLIDATED CASH PRIZE POOL</span>
-              <span className="text-slate-600">//</span>
-              <span>OFFICIAL TITLE SPONSOR: ROTARY SILVER CLUB</span>
               <span className="text-slate-600">//</span>
               <span className="text-emerald-400 font-bold">VTU AFFILIATED & LAEC HOSTED</span>
               <span className="text-slate-600">//</span>

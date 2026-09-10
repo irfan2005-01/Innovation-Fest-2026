@@ -95,18 +95,24 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copiedUpi, setCopiedUpi] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
+  const [qrMode, setQrMode] = useState<'universal' | 'prefilled'>('universal');
 
   // Generate dynamic QR Code for payment
   useEffect(() => {
     // Keep transaction note clean & alphanumeric for NPCI parser compatibility
     const safeTeam = (teamName || 'FEST').replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
-    const formattedAmount = Number(event.feeNumber).toFixed(2);
-    const upiUri = `upi://pay?pa=${encodeURIComponent(
-      OFFICIAL_UPI_ID
-    )}&pn=${encodeURIComponent(OFFICIAL_PAYEE)}&am=${formattedAmount}&cu=INR&tn=REG-${safeTeam}`;
+    const cleanUpi = OFFICIAL_UPI_ID.trim();
+    const encodedPayee = encodeURIComponent(OFFICIAL_PAYEE.trim());
+
+    // Universal static format: raw pa with literal @, no am parameter
+    // Standard format accepted by 100% of Indian UPI apps without dynamic-collect bank rejection
+    const upiUri =
+      qrMode === 'universal'
+        ? `upi://pay?pa=${cleanUpi}&pn=${encodedPayee}&cu=INR`
+        : `upi://pay?pa=${cleanUpi}&pn=${encodedPayee}&am=${event.feeNumber}&cu=INR&tn=REG-${safeTeam}`;
 
     QRCode.toDataURL(upiUri, {
-      width: 300,
+      width: 320,
       margin: 2,
       errorCorrectionLevel: 'M',
       color: {
@@ -116,7 +122,7 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
     })
       .then((url) => setQrCodeDataUrl(url))
       .catch((err) => console.error('QR code error:', err));
-  }, [event.feeNumber, teamName]);
+  }, [event.feeNumber, teamName, qrMode]);
 
   const handleCopyUpi = () => {
     navigator.clipboard.writeText(OFFICIAL_UPI_ID);
@@ -311,9 +317,12 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   const isUtrInvalid = utrTouched && utrNumber.length > 0 && utrNumber.length !== 12;
   const safeTeamName = (teamName || 'FEST').replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
   const formattedAmount = Number(event.feeNumber).toFixed(2);
-  const directUpiIntentUrl = `upi://pay?pa=${encodeURIComponent(
-    OFFICIAL_UPI_ID
-  )}&pn=${encodeURIComponent(OFFICIAL_PAYEE)}&am=${formattedAmount}&cu=INR&tn=REG-${safeTeamName}`;
+  const cleanUpiId = OFFICIAL_UPI_ID.trim();
+  const encodedPayee = encodeURIComponent(OFFICIAL_PAYEE.trim());
+  const directUpiIntentUrl =
+    qrMode === 'universal'
+      ? `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&cu=INR`
+      : `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&am=${formattedAmount}&cu=INR&tn=REG-${safeTeamName}`;
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -344,7 +353,7 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
           {/* QR Code & Payee Details */}
           <div className="flex flex-col md:flex-row items-center gap-5 p-4 rounded-xl bg-slate-900 border border-slate-700">
             {/* Dynamic QR Code */}
-            <div className="p-2.5 rounded-2xl bg-white shadow-xl flex flex-col items-center justify-center shrink-0">
+            <div className="p-3 rounded-2xl bg-white shadow-xl flex flex-col items-center justify-center shrink-0 w-full sm:w-56">
               {qrCodeDataUrl ? (
                 <img
                   src={qrCodeDataUrl}
@@ -356,9 +365,47 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
                   Generating QR...
                 </div>
               )}
-              <span className="text-[10px] font-mono text-slate-800 mt-1 font-black">
-                SCAN VIA GPAY / PHONEPE / PAYTM
+              <span className="text-[10px] font-mono text-slate-900 mt-1 font-black tracking-wider text-center">
+                SCAN WITH ANY UPI APP
               </span>
+
+              {/* QR Mode Switcher */}
+              <div className="mt-2 w-full flex rounded-lg bg-slate-100 p-0.5 border border-slate-300 text-[10px] font-mono">
+                <button
+                  type="button"
+                  onClick={() => setQrMode('universal')}
+                  className={`flex-1 py-1 px-1.5 rounded font-bold transition-all text-center ${
+                    qrMode === 'universal'
+                      ? 'bg-slate-900 text-cyan-300 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                  title="Universal mode works seamlessly on Google Pay, PhonePe, Paytm, and BHIM"
+                >
+                  Universal (Safe)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setQrMode('prefilled')}
+                  className={`flex-1 py-1 px-1.5 rounded font-bold transition-all text-center ${
+                    qrMode === 'prefilled'
+                      ? 'bg-slate-900 text-cyan-300 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                  title="Auto pre-fills the registration amount"
+                >
+                  Auto ₹{event.feeNumber}
+                </button>
+              </div>
+
+              {qrMode === 'universal' ? (
+                <span className="text-[9px] font-mono text-emerald-700 font-semibold mt-1 text-center">
+                  ✓ Universal Mode (Manual amount ₹{event.feeNumber})
+                </span>
+              ) : (
+                <span className="text-[9px] font-mono text-amber-700 font-semibold mt-1 text-center">
+                  ⚡ Pre-filled Mode (₹{event.feeNumber})
+                </span>
+              )}
             </div>
 
             {/* Official UPI Details */}
@@ -398,14 +445,19 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
               <div className="pt-1.5">
                 <a
                   href={directUpiIntentUrl}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-cyan-500/40 text-cyan-300 font-bold text-xs transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-cyan-500/20 transition-all active:scale-[0.98]"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>Tap to Pay on Mobile App</span>
                 </a>
               </div>
 
-              <div className="text-[10px] text-slate-400 pt-1">
+              {/* Helpful Scanner Tip */}
+              <div className="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-500/20 text-[10.5px] text-cyan-200/90 leading-relaxed">
+                💡 <strong className="text-white">Scanner Tip:</strong> If Google Pay shows <em>&ldquo;Unable to scan QR. Temporary technical issue&rdquo;</em>, keep <strong className="text-white">Universal (Safe)</strong> selected and enter <strong className="text-emerald-400 font-bold">₹{event.feeNumber}</strong> manually when prompted.
+              </div>
+
+              <div className="text-[10px] text-slate-400 pt-0.5">
                 Pay exactly <strong className="text-white">{event.feeDisplay}</strong>. Mention{' '}
                 <strong className="text-cyan-300">REG-{teamName || 'TEAM'}</strong> in remarks.
               </div>

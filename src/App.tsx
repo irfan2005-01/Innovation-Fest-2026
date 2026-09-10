@@ -127,7 +127,6 @@ export function App() {
                 onNavigate={navigateTo}
                 onOpenRegister={() => setRegisterModalOpen(true)}
                 onOpenBrochure={() => setBrochureModalOpen(true)}
-                onOpenSponsor={() => setSponsorModalOpen(true)}
               />
             )}
             {currentPage === 'about' && (

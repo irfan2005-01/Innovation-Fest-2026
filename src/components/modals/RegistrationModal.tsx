@@ -456,7 +456,6 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         required
                         value={teamName}
                         onChange={(e) => setTeamName(e.target.value)}
-                        placeholder="e.g., CodeCrafters / TechTitans"
                         className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
                       />
                     </div>
@@ -470,7 +469,6 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         required
                         value={collegeName}
                         onChange={(e) => setCollegeName(e.target.value)}
-                        placeholder="e.g., Lingaraj Appa Engineering College, Bidar"
                         className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
                       />
                     </div>

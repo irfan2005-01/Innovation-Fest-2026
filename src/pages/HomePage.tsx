@@ -18,22 +18,19 @@ import { InteractiveFestPoster } from '../components/InteractiveFestPoster';
 import { SpotlightCard } from '../components/ui/SpotlightCard';
 import { AnimatedCounter } from '../components/ui/AnimatedCounter';
 import { PageId } from '../types';
-import { titleSponsor } from '../data/sponsorsData';
 import { eventsData } from '../data/eventsData';
 import { officialThemes } from '../data/themesData';
 
-interface HomePageProps {
+export interface HomePageProps {
   onNavigate: (page: PageId) => void;
   onOpenRegister: () => void;
   onOpenBrochure: () => void;
-  onOpenSponsor: () => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   onNavigate,
   onOpenRegister,
   onOpenBrochure,
-  onOpenSponsor,
 }) => {
   return (
     <div className="space-y-16 sm:space-y-24 pb-16">
@@ -61,48 +58,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Brand Official Logo Hero Artwork */}
         <HackoraLogo size="hero" className="mb-6" />
 
-        {/* 2. OFFICIAL TITLE SPONSOR (ROTARY SILVER CLUB) */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mt-4 mb-6 max-w-3xl mx-auto px-2"
-        >
-          <div className="flex items-center justify-center gap-3 mb-2.5">
-            <span className="h-[1px] w-6 sm:w-16 bg-gradient-to-r from-transparent to-cyan-400" />
-            <span className="text-[11px] font-mono font-bold tracking-[0.25em] text-cyan-400 uppercase flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3 text-cyan-400 animate-spin" style={{ animationDuration: '6s' }} />
-              <span>OFFICIAL TITLE SPONSOR</span>
-            </span>
-            <span className="h-[1px] w-6 sm:w-16 bg-gradient-to-l from-transparent to-cyan-400" />
-          </div>
 
-          <SpotlightCard
-            onClick={() => onNavigate('sponsors')}
-            enableTilt={true}
-            enableBorderBeam={true}
-            borderBeamDuration={14}
-            spotlightColor="rgba(0, 242, 254, 0.25)"
-            className="rounded-2xl p-1 bg-gradient-to-r from-cyan-500/40 via-blue-500/40 to-amber-500/40 hover:from-cyan-400 hover:via-blue-400 hover:to-amber-400 shadow-xl shadow-cyan-500/10 transition-all duration-300 cursor-pointer"
-          >
-            <div className="rounded-[14px] overflow-hidden bg-slate-950/95 backdrop-blur-xl border border-white/10 relative">
-              <img
-                src={titleSponsor.bannerImage}
-                alt="Rotary Silver Club - Official Title Sponsor"
-                className="w-full h-auto object-contain select-none group-hover:scale-[1.01] transition-transform duration-300"
-              />
-            </div>
-          </SpotlightCard>
-          <div className="mt-2 text-center">
-            <button
-              onClick={onOpenSponsor}
-              className="text-[11px] font-mono text-slate-400 hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5"
-            >
-              <span>Partner with LAEC Innovation Fest 2026</span>
-              <span className="text-cyan-400 font-bold">Partner With Us →</span>
-            </button>
-          </div>
-        </motion.div>
 
         {/* 3. ANIMATED DIGITAL FEST STAGE (REPLACED STATIC POSTER IMAGE) */}
         <InteractiveFestPoster

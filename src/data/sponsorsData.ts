@@ -10,15 +10,15 @@ export interface TitleSponsor {
 }
 
 export const titleSponsor: TitleSponsor = {
-  name: 'Rotary Silver Club',
-  subtitle: 'People of Action',
-  tagline: 'Service Above Self',
+  name: 'Official Fest Partners',
+  subtitle: 'Innovation Fest 2026',
+  tagline: 'Empowering Future Engineers',
   motto: 'Ideas • Innovation • Impact',
-  bannerImage: '/images/rotary-silver-club-title-sponsor.png',
-  category: 'Official Title Sponsor',
+  bannerImage: '',
+  category: 'Partnership Desk',
   description:
-    'Dedicated to empowering the next generation of engineers, fostering technological innovation, community development, and leadership excellence across Karnataka.',
-  corePillars: ['Community', 'Leadership', 'Opportunity', 'Service'],
+    'Dedicated to empowering the next generation of engineers, fostering technological innovation, community development, and leadership excellence.',
+  corePillars: ['Community', 'Leadership', 'Opportunity', 'Innovation'],
 };
 
 // Backwards compatibility empty arrays for clean imports
