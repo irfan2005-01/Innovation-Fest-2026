@@ -476,7 +476,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
           } space-y-1`}
         >
           <div className="text-[11px] font-mono text-emerald-300 uppercase tracking-wider flex items-center justify-between">
-            <span>Expo (₹300)</span>
+            <span>Expo (₹250)</span>
             {selectedEvent === 'project_expo' && (
               <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
                 FILTERED
@@ -487,7 +487,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
             {expoCount} <span className="text-xs font-normal text-slate-400">teams</span>
           </div>
           <div className="text-[11px] font-mono text-slate-400">
-            ₹{(expoCount * 300).toLocaleString()}
+            ₹{(expoCount * 250).toLocaleString()}
           </div>
         </button>
       </div>
@@ -577,7 +577,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
               <option value="all">All Events (Hackora, Idea, Expo)</option>
               <option value="hackora">HACKORA 2026 (₹1,200)</option>
               <option value="ideathon">IDEATHON 2026 (₹250)</option>
-              <option value="project_expo">PROJECT EXPO 2026 (₹300)</option>
+              <option value="project_expo">PROJECT EXPO 2026 (₹250)</option>
             </select>
           </div>
 

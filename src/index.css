@@ -220,3 +220,28 @@ html.light .bg-grid-pattern {
     -webkit-text-fill-color: transparent;
   }
 }
+
+/* Mobile Hardware Acceleration & Smooth 60fps Scroll Optimization */
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Cap expensive multi-layer backdrop-filters on mobile to eliminate GPU compositor bottlenecks */
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+  }
+
+  /* Prevent automatic iOS input zoom which breaks mobile modal viewport */
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+

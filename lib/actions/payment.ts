@@ -12,8 +12,8 @@ import {
 export const EVENT_FEES = {
   hackora: 1200,
   ideathon: 250,
-  project_expo: 300,
-  expo: 300,
+  project_expo: 250,
+  expo: 250,
 } as const;
 
 export interface SubmitPaymentInput {

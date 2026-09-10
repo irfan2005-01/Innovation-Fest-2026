@@ -27,56 +27,78 @@ export const CyberBackground: React.FC<CyberBackgroundProps> = ({ theme }) => {
       />
 
       {/* 3. DYNAMIC FLOATING AURORA ORBS */}
-      {/* Orb 1: Cyan / Sky (Top Left / Center) */}
-      <motion.div
-        animate={{
-          x: [0, 40, -30, 0],
-          y: [0, -35, 25, 0],
-          scale: [1, 1.12, 0.95, 1],
-        }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-        className={`absolute top-10 left-1/4 w-[550px] h-[550px] rounded-full blur-[130px] pointer-events-none transition-colors duration-700 ${
-          isDark ? 'bg-cyan-500/16' : 'bg-cyan-400/22'
-        }`}
-      />
+      {/* Mobile-optimized lightweight static ambient glow (0% CPU/GPU overhead) */}
+      <div className="md:hidden absolute inset-0 pointer-events-none">
+        <div
+          className={`absolute -top-10 left-1/2 -translate-x-1/2 w-[320px] h-[320px] rounded-full blur-[60px] opacity-40 pointer-events-none ${
+            isDark ? 'bg-cyan-500/25' : 'bg-sky-400/25'
+          }`}
+        />
+        <div
+          className={`absolute top-1/3 -right-10 w-[260px] h-[260px] rounded-full blur-[50px] opacity-35 pointer-events-none ${
+            isDark ? 'bg-violet-600/20' : 'bg-purple-400/25'
+          }`}
+        />
+        <div
+          className={`absolute bottom-20 -left-10 w-[240px] h-[240px] rounded-full blur-[50px] opacity-25 pointer-events-none ${
+            isDark ? 'bg-orange-500/15' : 'bg-amber-300/25'
+          }`}
+        />
+      </div>
 
-      {/* Orb 2: Purple / Violet (Mid Right) */}
-      <motion.div
-        animate={{
-          x: [0, -50, 30, 0],
-          y: [0, 45, -35, 0],
-          scale: [1, 0.92, 1.1, 1],
-        }}
-        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
-        className={`absolute top-1/3 right-8 w-[600px] h-[600px] rounded-full blur-[150px] pointer-events-none transition-colors duration-700 ${
-          isDark ? 'bg-violet-600/18' : 'bg-purple-400/22'
-        }`}
-      />
+      {/* Desktop Animated Aurora Orbs (Smooth on high-performance screens) */}
+      <div className="hidden md:block">
+        {/* Orb 1: Cyan / Sky (Top Left / Center) */}
+        <motion.div
+          animate={{
+            x: [0, 40, -30, 0],
+            y: [0, -35, 25, 0],
+            scale: [1, 1.12, 0.95, 1],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute top-10 left-1/4 w-[550px] h-[550px] rounded-full blur-[130px] pointer-events-none transition-colors duration-700 ${
+            isDark ? 'bg-cyan-500/16' : 'bg-cyan-400/22'
+          }`}
+        />
 
-      {/* Orb 3: Orange / Amber Accent (Lower Left) */}
-      <motion.div
-        animate={{
-          x: [0, 35, -25, 0],
-          y: [0, -30, 20, 0],
-          scale: [1, 1.08, 0.92, 1],
-        }}
-        transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
-        className={`absolute bottom-24 left-8 w-[480px] h-[480px] rounded-full blur-[140px] pointer-events-none transition-colors duration-700 ${
-          isDark ? 'bg-orange-500/10' : 'bg-amber-300/22'
-        }`}
-      />
+        {/* Orb 2: Purple / Violet (Mid Right) */}
+        <motion.div
+          animate={{
+            x: [0, -50, 30, 0],
+            y: [0, 45, -35, 0],
+            scale: [1, 0.92, 1.1, 1],
+          }}
+          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute top-1/3 right-8 w-[600px] h-[600px] rounded-full blur-[150px] pointer-events-none transition-colors duration-700 ${
+            isDark ? 'bg-violet-600/18' : 'bg-purple-400/22'
+          }`}
+        />
 
-      {/* Orb 4: Emerald / Teal Accent (Lower Right) */}
-      <motion.div
-        animate={{
-          x: [0, -30, 20, 0],
-          y: [0, 25, -25, 0],
-        }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-        className={`absolute bottom-40 right-1/4 w-[450px] h-[450px] rounded-full blur-[130px] pointer-events-none transition-colors duration-700 ${
-          isDark ? 'bg-emerald-500/12' : 'bg-emerald-400/18'
-        }`}
-      />
+        {/* Orb 3: Orange / Amber Accent (Lower Left) */}
+        <motion.div
+          animate={{
+            x: [0, 35, -25, 0],
+            y: [0, -30, 20, 0],
+            scale: [1, 1.08, 0.92, 1],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute bottom-24 left-8 w-[480px] h-[480px] rounded-full blur-[140px] pointer-events-none transition-colors duration-700 ${
+            isDark ? 'bg-orange-500/10' : 'bg-amber-300/22'
+          }`}
+        />
+
+        {/* Orb 4: Emerald / Teal Accent (Lower Right) */}
+        <motion.div
+          animate={{
+            x: [0, -30, 20, 0],
+            y: [0, 25, -25, 0],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute bottom-40 right-1/4 w-[450px] h-[450px] rounded-full blur-[130px] pointer-events-none transition-colors duration-700 ${
+            isDark ? 'bg-emerald-500/12' : 'bg-emerald-400/18'
+          }`}
+        />
+      </div>
 
       {/* 4. HIGH-TECH GRID & DOT MATRIX PATTERN */}
       <div
@@ -99,8 +121,8 @@ export const CyberBackground: React.FC<CyberBackgroundProps> = ({ theme }) => {
         }}
       />
 
-      {/* 5. FLOATING CYBER PARTICLES / STAR DUST */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* 5. FLOATING CYBER PARTICLES / STAR DUST (Desktop Only to ensure zero lag on mobile) */}
+      <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
         {PARTICLES.map((p, i) => (
           <motion.div
             key={i}

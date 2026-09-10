@@ -51,7 +51,7 @@ export interface PaymentCardProps {
 
 const OFFICIAL_UPI_ID =
   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_UPI_ID) ||
-  '76206467008724@cnrb';
+  'sshoeib17-4@okhdfcbank';
 const OFFICIAL_PAYEE =
   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_UPI_NAME) ||
   'Lingaraj Appa Engineering College';

@@ -116,11 +116,6 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onNavigate, onOpenRegist
             </button>
           ))}
         </div>
-
-        <div className="text-xs font-mono text-slate-400 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span>Offline On-Campus Defense: 22 Sep 2026 @ LAEC Bidar</span>
-        </div>
       </div>
 
       {/* Events Cards */}

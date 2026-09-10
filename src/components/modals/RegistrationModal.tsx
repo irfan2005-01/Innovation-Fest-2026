@@ -88,8 +88,8 @@ const EVENTS: Record<EventKey, EventConfig> = {
     name: 'PROJECT EXPO 2026',
     category: 'Physical Working Model Exhibition',
     tagline: 'Working physical prototypes & engineering demonstrations',
-    feeNumber: 300,
-    feeDisplay: '₹300',
+    feeNumber: 250,
+    feeDisplay: '₹250',
     teamSizeLabel: '1 to 2 Members',
     minMembers: 1,
     maxMembers: 2,
@@ -108,24 +108,6 @@ const HACKORA_THEMES = [
   'Smart Infrastructure, Mobility & Clean Energy',
   'Smart Education, EdTech & Campus Management',
   'Open Innovation & Emerging Tech',
-];
-
-const IDEATHON_DOMAINS = [
-  'FinTech & Digital Commerce',
-  'AgriTech & Rural Development',
-  'Healthcare & Bio-Innovations',
-  'Clean Energy, Climate & Smart Cities',
-  'EdTech & Social Impact',
-  'Open Tech & Frontier Innovation',
-];
-
-const EXPO_CATEGORIES = [
-  'Embedded Systems / IoT & Robotics',
-  'Mechanical & Mechatronics Working Model',
-  'Civil & Sustainable Infrastructure Model',
-  'Electrical & Renewable Energy Systems',
-  'AI Edge Devices & Hardware Prototypes',
-  'Interdisciplinary Engineering Showcase',
 ];
 
 const BRANCH_OPTIONS = [
@@ -166,14 +148,11 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
     { name: '', email: '', phone: '', usn: '', branch: BRANCH_OPTIONS[0] },
   ]);
 
-  // Event Track & Project/Pitch Title (Clean & Academic)
+  // Event Track & Project/Pitch Title
+  // Hackathon: Themes only (no project title)
+  // Ideathon & Expo: Title only (no themes/categories)
   const [hackoraTheme, setHackoraTheme] = useState(HACKORA_THEMES[0]);
-  const [hackoraProjectTitle, setHackoraProjectTitle] = useState('');
-
-  const [ideathonDomain, setIdeathonDomain] = useState(IDEATHON_DOMAINS[0]);
   const [ideathonSolutionTitle, setIdeathonSolutionTitle] = useState('');
-
-  const [expoCategory, setExpoCategory] = useState(EXPO_CATEGORIES[0]);
   const [expoModelTitle, setExpoModelTitle] = useState('');
 
   // UI & Receipt States
@@ -238,9 +217,9 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
       return;
     }
 
-    // 2. Event-Specific Title Check
-    if (selectedEvent === 'hackora' && !hackoraProjectTitle.trim()) {
-      setSubmitError('Please enter your Hackathon Project / Concept Title.');
+    // 2. Event-Specific Validation (Hackathon requires Theme; Ideathon & Expo require Title)
+    if (selectedEvent === 'hackora' && !hackoraTheme) {
+      setSubmitError('Please select a Hackathon Track / Theme.');
       return;
     }
 
@@ -258,8 +237,8 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
     const requiredMemberCount = teamSize - 1;
     for (let i = 0; i < requiredMemberCount; i++) {
       const m = members[i];
-      if (!m || !m.name.trim() || !m.email.trim() || !m.phone?.trim() || !m.usn?.trim()) {
-        setSubmitError(`Please complete all details for Team Member ${i + 2} (Name, Email, Phone, USN).`);
+      if (!m || !m.name.trim() || !m.usn?.trim()) {
+        setSubmitError(`Please enter Full Name and USN / Student ID for Team Member ${i + 2}.`);
         return;
       }
     }
@@ -276,7 +255,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
     setLeaderEmail('');
     setLeaderPhone('');
     setLeaderUsn('');
-    setHackoraProjectTitle('');
+    setHackoraTheme(HACKORA_THEMES[0]);
     setIdeathonSolutionTitle('');
     setExpoModelTitle('');
     setReceiptRecord(null);
@@ -524,17 +503,17 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                   </div>
                 </div>
 
-                {/* 3. Event Track & Project/Concept Title */}
+                {/* 3. Event Track / Title Section */}
                 <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-3">
                   <div className="text-xs font-mono text-cyan-400 uppercase tracking-wider flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <GraduationCap className="w-3.5 h-3.5" />
                       <span>
                         {selectedEvent === 'hackora'
-                          ? 'Hackathon Theme & Project Concept'
+                          ? 'Hackathon Track / Theme'
                           : selectedEvent === 'ideathon'
-                          ? 'Ideathon Domain & Pitch Title'
-                          : 'Project Expo Category & Model Title'}
+                          ? 'Proposed Solution / Pitch Title'
+                          : 'Working Model / Prototype Title'}
                       </span>
                     </div>
                     <span className="text-[10px] text-cyan-300 font-bold bg-cyan-500/10 px-2 py-0.5 rounded">
@@ -542,111 +521,66 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     </span>
                   </div>
 
-                  {/* HACKORA Form Fields */}
+                  {/* HACKORA Form Fields - THEMES ONLY */}
                   {selectedEvent === 'hackora' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[11px] font-mono text-slate-300 mb-1">
-                          Hackathon Track / Theme *
-                        </label>
-                        <select
-                          value={hackoraTheme}
-                          onChange={(e) => setHackoraTheme(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-cyan-500/40 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
-                        >
-                          {HACKORA_THEMES.map((t) => (
-                            <option key={t} value={t}>
-                              {t}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-mono text-slate-300 mb-1">
-                          Project / Hack Working Title *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={hackoraProjectTitle}
-                          onChange={(e) => setHackoraProjectTitle(e.target.value)}
-                          placeholder="e.g., AI Diagnostic Copilot for Rural Clinics"
-                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
-                        />
-                      </div>
+                    <div>
+                      <label className="block text-[11px] font-mono text-slate-300 mb-1">
+                        Hackathon Track / Theme *
+                      </label>
+                      <select
+                        value={hackoraTheme}
+                        onChange={(e) => setHackoraTheme(e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-cyan-500/40 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
+                      >
+                        {HACKORA_THEMES.map((t) => (
+                          <option key={t} value={t}>
+                            {t}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-[10px] font-mono text-slate-400 mt-1.5">
+                        Select your challenge theme. Specific project titles and prototypes are formulated during the 24-hour sprint.
+                      </p>
                     </div>
                   )}
 
-                  {/* IDEATHON Form Fields */}
+                  {/* IDEATHON Form Fields - TITLES ONLY */}
                   {selectedEvent === 'ideathon' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[11px] font-mono text-slate-300 mb-1">
-                          Innovation Sector / Domain *
-                        </label>
-                        <select
-                          value={ideathonDomain}
-                          onChange={(e) => setIdeathonDomain(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-purple-500/40 text-white text-xs font-mono focus:border-purple-400 focus:outline-none"
-                        >
-                          {IDEATHON_DOMAINS.map((d) => (
-                            <option key={d} value={d}>
-                              {d}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-mono text-slate-300 mb-1">
-                          Proposed Solution / Pitch Title *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={ideathonSolutionTitle}
-                          onChange={(e) => setIdeathonSolutionTitle(e.target.value)}
-                          placeholder="e.g., Micro-Solar Cold Storage Chain for Farmers"
-                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:border-purple-400 focus:outline-none"
-                        />
-                      </div>
+                    <div>
+                      <label className="block text-[11px] font-mono text-slate-300 mb-1">
+                        Proposed Solution / Pitch Title *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={ideathonSolutionTitle}
+                        onChange={(e) => setIdeathonSolutionTitle(e.target.value)}
+                        placeholder="e.g., Micro-Solar Cold Storage Chain for Rural Farmers"
+                        className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-purple-500/40 text-white text-xs font-mono focus:border-purple-400 focus:outline-none"
+                      />
+                      <p className="text-[10px] font-mono text-slate-400 mt-1.5">
+                        Provide a clear, descriptive title for your innovation pitch or idea.
+                      </p>
                     </div>
                   )}
 
-                  {/* PROJECT EXPO Form Fields */}
+                  {/* PROJECT EXPO Form Fields - TITLES ONLY */}
                   {selectedEvent === 'expo' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[11px] font-mono text-slate-300 mb-1">
-                          Model Category / Branch *
-                        </label>
-                        <select
-                          value={expoCategory}
-                          onChange={(e) => setExpoCategory(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-emerald-500/40 text-white text-xs font-mono focus:border-emerald-400 focus:outline-none"
-                        >
-                          {EXPO_CATEGORIES.map((c) => (
-                            <option key={c} value={c}>
-                              {c}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-mono text-slate-300 mb-1">
-                          Working Model Display Title *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={expoModelTitle}
-                          onChange={(e) => setExpoModelTitle(e.target.value)}
-                          placeholder="e.g., Dual-Axis Smart Solar Tracker Prototype"
-                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:border-emerald-400 focus:outline-none"
-                        />
-                      </div>
+                    <div>
+                      <label className="block text-[11px] font-mono text-slate-300 mb-1">
+                        Working Model Display Title *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={expoModelTitle}
+                        onChange={(e) => setExpoModelTitle(e.target.value)}
+                        placeholder="e.g., Dual-Axis Smart Solar Tracker Prototype"
+                        className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-emerald-500/40 text-white text-xs font-mono focus:border-emerald-400 focus:outline-none"
+                      />
+                      <p className="text-[10px] font-mono text-slate-400 mt-1.5">
+                        Provide the name of the physical working prototype or model you will display.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -768,9 +702,9 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         <div className="text-[11px] font-mono text-cyan-300 font-bold">
                           Member {idx + 2} Details:
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                           <div>
-                            <label className="block text-[10px] font-mono text-slate-400 mb-0.5">
+                            <label className="block text-[10px] font-mono text-slate-300 mb-0.5">
                               Full Name *
                             </label>
                             <input
@@ -782,49 +716,13 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                                 updated[idx] = { ...updated[idx], name: e.target.value };
                                 setMembers(updated);
                               }}
-                              placeholder="Full Name"
-                              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
+                              placeholder="Teammate Full Name"
+                              className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-mono text-slate-400 mb-0.5">
-                              Email *
-                            </label>
-                            <input
-                              type="email"
-                              required
-                              value={members[idx]?.email || ''}
-                              onChange={(e) => {
-                                const updated = [...members];
-                                updated[idx] = { ...updated[idx], email: e.target.value };
-                                setMembers(updated);
-                              }}
-                              placeholder="email@college.edu"
-                              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-[10px] font-mono text-slate-400 mb-0.5">
-                              WhatsApp / Mobile *
-                            </label>
-                            <input
-                              type="tel"
-                              required
-                              value={members[idx]?.phone || ''}
-                              onChange={(e) => {
-                                const updated = [...members];
-                                updated[idx] = { ...updated[idx], phone: e.target.value };
-                                setMembers(updated);
-                              }}
-                              placeholder="Mobile No"
-                              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-[10px] font-mono text-slate-400 mb-0.5">
+                            <label className="block text-[10px] font-mono text-slate-300 mb-0.5">
                               USN / Student ID *
                             </label>
                             <input
@@ -837,7 +735,24 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                                 setMembers(updated);
                               }}
                               placeholder="e.g., 3LA22CS012"
-                              className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
+                              className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-mono text-slate-400 mb-0.5">
+                              Mobile Number (Optional)
+                            </label>
+                            <input
+                              type="tel"
+                              value={members[idx]?.phone || ''}
+                              onChange={(e) => {
+                                const updated = [...members];
+                                updated[idx] = { ...updated[idx], phone: e.target.value };
+                                setMembers(updated);
+                              }}
+                              placeholder="10-digit mobile"
+                              className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
                             />
                           </div>
                         </div>
@@ -883,19 +798,13 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                 studentId={leaderUsn}
                 branch={leaderBranch}
                 year={leaderYear}
-                themeId={
-                  selectedEvent === 'hackora'
-                    ? hackoraTheme
-                    : selectedEvent === 'ideathon'
-                    ? ideathonDomain
-                    : expoCategory
-                }
+                themeId={selectedEvent === 'hackora' ? hackoraTheme : undefined}
                 projectTitle={
-                  selectedEvent === 'hackora'
-                    ? hackoraProjectTitle
-                    : selectedEvent === 'ideathon'
+                  selectedEvent === 'ideathon'
                     ? ideathonSolutionTitle
-                    : expoModelTitle
+                    : selectedEvent === 'expo'
+                    ? expoModelTitle
+                    : undefined
                 }
                 members={members.slice(0, Math.max(0, teamSize - 1)).filter((m) => m.name.trim())}
                 onSuccess={(record) => {
@@ -1014,16 +923,24 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                       </span>
                     </div>
 
-                    <div>
-                      <span className="text-slate-400 block text-[10px]">THEME / TRACK</span>
-                      <span className="font-semibold text-slate-200">
-                        {receiptRecord.themeId || 'Open Innovation'}
-                      </span>
-                    </div>
+                    {receiptRecord.themeId && (
+                      <div className="col-span-1 sm:col-span-2">
+                        <span className="text-slate-400 block text-[10px]">HACKATHON THEME / TRACK</span>
+                        <span className="font-semibold text-cyan-300">
+                          {receiptRecord.themeId}
+                        </span>
+                      </div>
+                    )}
 
                     {receiptRecord.projectTitle && (
                       <div className="col-span-1 sm:col-span-2">
-                        <span className="text-slate-400 block text-[10px]">PROJECT / CONCEPT TITLE</span>
+                        <span className="text-slate-400 block text-[10px]">
+                          {receiptRecord.eventType === 'project_expo' || receiptRecord.eventType === 'expo' || receiptRecord.eventName?.toLowerCase().includes('expo')
+                            ? 'WORKING MODEL / PROTOTYPE TITLE'
+                            : receiptRecord.eventType === 'ideathon' || receiptRecord.eventName?.toLowerCase().includes('ideathon')
+                            ? 'PROPOSED SOLUTION / PITCH TITLE'
+                            : 'PROJECT TITLE'}
+                        </span>
                         <span className="font-bold text-white">
                           {receiptRecord.projectTitle}
                         </span>

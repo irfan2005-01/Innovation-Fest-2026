@@ -124,7 +124,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
     badge: 'Physical Working Model Expo',
     title: 'PROJECT EXPO 2026',
     tagline: 'Physical Hardware & Working Prototype Exhibition',
-    fee: '₹300 / team',
+    fee: '₹250 / team',
     prizePool: '₹5,000+',
     firstPrize: '₹3,000 1st Prize',
     format: 'Live Working Hardware Demonstration on Expo Floor',
@@ -168,8 +168,8 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
         {/* Animated Laser Border Beam */}
         <BorderBeam duration={10} colorFrom="#00f2fe" colorTo="#8b5cf6" />
 
-        {/* Animated Laser Scanline Sweep */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-20">
+        {/* Animated Laser Scanline Sweep (Desktop Only) */}
+        <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none z-20">
           <motion.div
             animate={{ y: ['-100%', '300%'] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
@@ -328,7 +328,7 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
                   activeTrack === 'expo' ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-800 text-emerald-300'
                 }`}
               >
-                ₹300
+                ₹250
               </span>
             </motion.button>
           </div>

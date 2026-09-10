@@ -71,7 +71,7 @@ export const eventsData: EventItem[] = [
     description:
       'Exhibit your working hardware model, software system, or research project directly to industry evaluators, faculty experts, and peer innovators at the LAEC campus.',
     teamSize: '1–2 Members',
-    fee: '₹300 / team',
+    fee: '₹250 / team',
     prizePool: '₹5,000+',
     firstPrize: '₹3,000',
     secondPrize: '₹2,000',
