@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   QrCode,
   CreditCard,
@@ -13,7 +13,6 @@ import {
   X,
   Loader2,
 } from 'lucide-react';
-import QRCode from 'qrcode';
 import { supabase, isSupabaseConfigured } from '../src/lib/supabase';
 import { submitPaymentAction } from '../lib/actions/payment';
 
@@ -94,36 +93,6 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copiedUpi, setCopiedUpi] = useState(false);
-  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
-  const [qrMode, setQrMode] = useState<'universal' | 'prefilled'>('universal');
-
-  // Generate dynamic QR Code for payment matching Canara Bank Official Merchant payload
-  useEffect(() => {
-    const cleanUpi = OFFICIAL_UPI_ID.trim();
-    const payeeName = OFFICIAL_PAYEE.trim();
-
-    // Exact official merchant QR parameters matching the physical college poster & Canara Bank gateway:
-    // mc=8220 (Schools, Colleges and Universities)
-    // tr=1234567887654321
-    // tn=Pay to Merchant
-    // refUrl=http://npci.org/upi/schema/
-    const upiUri =
-      qrMode === 'universal'
-        ? `upi://pay?pa=${cleanUpi}&pn=${payeeName}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=0&mam=0&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`
-        : `upi://pay?pa=${cleanUpi}&pn=${payeeName}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=${event.feeNumber}&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`;
-
-    QRCode.toDataURL(upiUri, {
-      width: 320,
-      margin: 2,
-      errorCorrectionLevel: 'M',
-      color: {
-        dark: '#000000',
-        light: '#ffffff',
-      },
-    })
-      .then((url) => setQrCodeDataUrl(url))
-      .catch((err) => console.error('QR code error:', err));
-  }, [event.feeNumber, qrMode]);
 
   const handleCopyUpi = () => {
     navigator.clipboard.writeText(OFFICIAL_UPI_ID);
@@ -316,13 +285,9 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   };
 
   const isUtrInvalid = utrTouched && utrNumber.length > 0 && utrNumber.length !== 12;
-  const formattedAmount = Number(event.feeNumber).toFixed(2);
   const cleanUpiId = OFFICIAL_UPI_ID.trim();
   const encodedPayee = encodeURIComponent(OFFICIAL_PAYEE.trim());
-  const directUpiIntentUrl =
-    qrMode === 'universal'
-      ? `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=0&mam=0&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`
-      : `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=${formattedAmount}&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`;
+  const directUpiIntentUrl = `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=0&mam=0&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`;
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -352,60 +317,19 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
 
           {/* QR Code & Payee Details */}
           <div className="flex flex-col md:flex-row items-center gap-5 p-4 rounded-xl bg-slate-900 border border-slate-700">
-            {/* Dynamic QR Code */}
+            {/* Official College QR Code Image */}
             <div className="p-3 rounded-2xl bg-white shadow-xl flex flex-col items-center justify-center shrink-0 w-full sm:w-56">
-              {qrCodeDataUrl ? (
-                <img
-                  src={qrCodeDataUrl}
-                  alt="Official UPI QR Code"
-                  className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-lg"
-                />
-              ) : (
-                <div className="w-44 h-44 flex items-center justify-center text-xs font-mono text-slate-700">
-                  Generating QR...
-                </div>
-              )}
-              <span className="text-[10px] font-mono text-slate-900 mt-1 font-black tracking-wider text-center">
-                SCAN WITH ANY UPI APP
+              <img
+                src="/assets/official-payment-qr.png"
+                alt="Official Canara Bank UPI QR Code"
+                className="w-48 h-48 sm:w-52 sm:h-52 object-contain rounded-lg"
+              />
+              <span className="text-[10px] font-mono text-slate-900 mt-2 font-black tracking-wider text-center">
+                OFFICIAL COLLEGE PAYMENT QR
               </span>
-
-              {/* QR Mode Switcher */}
-              <div className="mt-2 w-full flex rounded-lg bg-slate-100 p-0.5 border border-slate-300 text-[10px] font-mono">
-                <button
-                  type="button"
-                  onClick={() => setQrMode('universal')}
-                  className={`flex-1 py-1 px-1.5 rounded font-bold transition-all text-center ${
-                    qrMode === 'universal'
-                      ? 'bg-slate-900 text-cyan-300 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                  title="Universal mode works seamlessly on Google Pay, PhonePe, Paytm, and BHIM"
-                >
-                  Universal (Safe)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setQrMode('prefilled')}
-                  className={`flex-1 py-1 px-1.5 rounded font-bold transition-all text-center ${
-                    qrMode === 'prefilled'
-                      ? 'bg-slate-900 text-cyan-300 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                  title="Auto pre-fills the registration amount"
-                >
-                  Auto ₹{event.feeNumber}
-                </button>
-              </div>
-
-              {qrMode === 'universal' ? (
-                <span className="text-[9px] font-mono text-emerald-700 font-semibold mt-1 text-center">
-                  ✓ Universal Mode (Manual amount ₹{event.feeNumber})
-                </span>
-              ) : (
-                <span className="text-[9px] font-mono text-amber-700 font-semibold mt-1 text-center">
-                  ⚡ Pre-filled Mode (₹{event.feeNumber})
-                </span>
-              )}
+              <span className="text-[9px] font-mono text-emerald-700 font-semibold mt-0.5 text-center">
+                ✓ Canara Bank Merchant Gateway
+              </span>
             </div>
 
             {/* Official UPI Details */}
