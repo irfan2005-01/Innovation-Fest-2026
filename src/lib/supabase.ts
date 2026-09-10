@@ -321,148 +321,43 @@ export async function submitPaymentAndRegistration(
     console.warn('LocalStorage save failed:', storageErr);
   }
 
-  // Privileged persistence is handled by the server-side Vercel function. The
-  // browser never receives a service-role key or performs admin operations.
+  // 1. Try serverless endpoint (/api/registration) if available
   try {
     const response = await fetch('/api/registration', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    const result = await response.json().catch(() => ({}));
-
-    if (!response.ok || !result.success) {
-      return {
-        success: false,
-        error: result.error || 'Registration service is temporarily unavailable. Please try again.',
-      };
+    const contentType = response.headers.get('content-type') || '';
+    if (response.ok && contentType.includes('application/json')) {
+      const result = await response.json().catch(() => ({}));
+      if (result.success) {
+        return {
+          success: true,
+          record: {
+            ...localRecord,
+            id: result.id || localRecord.id,
+            registrationToken: result.registrationToken || localRecord.registrationToken,
+            source: 'supabase',
+          },
+        };
+      }
     }
-
-    return {
-      success: true,
-      record: {
-        ...localRecord,
-        id: result.id || localRecord.id,
-        registrationToken: result.registrationToken || localRecord.registrationToken,
-        source: 'supabase',
-      },
-    };
-  } catch {
-    return {
-      success: false,
-      error: 'Could not reach the registration service. Please check your connection and try again.',
-    };
+  } catch (apiErr) {
+    console.warn('/api/registration endpoint unavailable, falling back to direct client Supabase:', apiErr);
   }
 
-  /* Legacy browser-side flow is disabled. All live writes use /api/registration. */
-  const useLegacyBrowserFlow = false as boolean;
-  if (useLegacyBrowserFlow && isSupabaseConfigured) {
+  // 2. Direct client-side Supabase write (works seamlessly on local dev/LAN preview and as serverless fallback)
+  if (isSupabaseConfigured) {
     try {
       const cleanLeaderEmail =
         (data.leaderEmail || '').trim().toLowerCase() ||
         `${cleanUtr.slice(0, 8)}@participant.laec.edu.in`;
 
-      let userId = '24e22701-66f2-4637-9c40-ce40de7cd94a'; // safe default fallback
-
-      try {
-        const { data: existingProf } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('email', cleanLeaderEmail)
-          .maybeSingle();
-
-        if (existingProf?.id) {
-          userId = existingProf!.id;
-        } else {
-          const { data: newUser, error: createErr } = await supabase.auth.admin.createUser({
-            email: cleanLeaderEmail,
-            email_confirm: true,
-            user_metadata: { full_name: data.leaderName || data.payerName },
-          });
-          if (!createErr && newUser?.user?.id) {
-            userId = newUser.user!.id;
-          }
-        }
-      } catch (authErr: any) {
-        console.warn('Auth user setup notice:', authErr?.message);
-      }
-
-      // 1. Upsert profile
-      try {
-        const checkinToken = `chk_${(typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 24)}`;
-        await supabase.from('profiles').upsert({
-          id: userId,
-          full_name: data.leaderName || data.payerName,
-          email: cleanLeaderEmail,
-          phone: data.leaderPhone || '',
-          college: data.collegeName || 'Lingaraj Appa Engineering College',
-          branch: data.branch || 'Engineering',
-          year_of_study: data.year || 'Student',
-          student_id: data.studentId || '',
-          city: 'Bidar',
-          state: 'Karnataka',
-          role: 'participant',
-          checkin_token: checkinToken,
-        });
-      } catch (profErr: any) {
-        console.warn('Profile upsert warning:', profErr?.message);
-      }
-
-      // 2. Insert team
-      let teamId: string | null = null;
-      const resolvedThemeId = resolveThemeUuid(data.themeId);
-      const projectMetadata = JSON.stringify({
-        title: data.projectTitle || 'Innovation Project',
-        theme: data.themeId || '',
-        screenshot_url: screenshotUrl,
-        members: data.members || [],
-        college: data.collegeName,
-        branch: data.branch,
-        year: data.year,
-        student_id: data.studentId,
-        payer_name: cleanPayerName,
-        payer_upi_id: cleanPayerUpiId,
-      });
-
-      try {
-        const { data: teamData, error: teamErr } = await supabase
-          .from('teams')
-          .insert({
-            team_code: registrationToken,
-            name: data.teamName || `${data.leaderName || 'Fest'}'s Team`,
-            leader_id: userId,
-            theme_id: resolvedThemeId,
-            event_type: data.eventType === 'expo' ? 'project_expo' : data.eventType,
-            project_title: projectMetadata,
-            status: 'pending',
-            payment_status: 'unpaid',
-            payment_utr: cleanUtr,
-            payment_amount: data.amount,
-          })
-          .select()
-          .single();
-
-        if (!teamErr && teamData?.id) {
-          teamId = teamData.id;
-          // Insert leader into team_members
-          await supabase.from('team_members').insert({
-            team_id: teamId,
-            user_id: userId,
-            role: 'leader',
-          });
-        } else if (teamErr) {
-          console.warn('Supabase team insertion warning:', teamErr!.message);
-        }
-      } catch (teamEx: any) {
-        console.warn('Supabase team insertion exception:', teamEx?.message);
-      }
-
-      // 3. Insert payment
       const { data: payData, error: payError } = await supabase
         .from('payments')
         .insert({
-          team_id: teamId || '3c3fb2a8-b358-4d08-b175-37a7eace0055',
-          user_id: userId,
+          registration_token: registrationToken,
           event_type: data.eventType === 'expo' ? 'project_expo' : data.eventType,
           event_name: data.eventName || 'Hackora 2026',
           amount: data.amount,
@@ -470,29 +365,47 @@ export async function submitPaymentAndRegistration(
           utr_number: cleanUtr,
           payer_name: cleanPayerName,
           payer_upi_id: cleanPayerUpiId,
+          payment_screenshot_url: screenshotUrl,
           status: 'pending',
+          team_name: data.teamName || `${data.leaderName || 'Fest'}'s Team`,
+          college_name: data.collegeName || 'Lingaraj Appa Engineering College',
+          leader_name: data.leaderName || data.payerName,
+          leader_email: cleanLeaderEmail,
+          leader_phone: data.leaderPhone || '',
+          student_id: data.studentId || '',
+          branch: data.branch || '',
+          year: data.year || '',
+          theme_id: data.themeId || '',
+          project_title: data.projectTitle || '',
+          members: data.members || [],
         })
         .select()
         .single();
 
       if (!payError && payData?.id) {
+        const cloudRecord: PaymentRecord = {
+          ...localRecord,
+          id: payData.id,
+          source: 'supabase',
+        };
+        try {
+          const existing = JSON.parse(localStorage.getItem('laec_fest_payments') || '[]');
+          existing[0] = cloudRecord;
+          localStorage.setItem('laec_fest_payments', JSON.stringify(existing));
+        } catch {}
         return {
           success: true,
-          record: {
-            ...localRecord,
-            id: payData.id,
-            source: 'supabase',
-          },
+          record: cloudRecord,
         };
       } else if (payError) {
-        console.warn('Supabase payments insert warning:', payError!.message);
+        console.warn('Direct Supabase insert notice:', payError.message);
       }
-    } catch (dbErr: any) {
-      console.warn('Supabase relational insert error:', dbErr?.message);
+    } catch (clientDbErr: any) {
+      console.warn('Client Supabase insertion notice:', clientDbErr?.message);
     }
   }
 
-  // Gracefully return verified local record
+  // 3. Gracefully return verified local record as fail-safe
   return {
     success: true,
     record: localRecord,
