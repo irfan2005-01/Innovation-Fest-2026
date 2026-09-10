@@ -55,7 +55,7 @@ const OFFICIAL_UPI_ID =
 
 const OFFICIAL_PAYEE =
   (typeof import.meta !== 'undefined' && import.meta.env?.VITE_UPI_NAME) ||
-  'Lingaraj Appa Engineering College';
+  'PRESIDENT AND PRINCIPAL LINGRAJ APPA ENGINEERING COLLEGE E';
 
 export const PaymentCard: React.FC<PaymentCardProps> = ({
   event,
@@ -97,19 +97,20 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
   const [qrMode, setQrMode] = useState<'universal' | 'prefilled'>('universal');
 
-  // Generate dynamic QR Code for payment
+  // Generate dynamic QR Code for payment matching Canara Bank Official Merchant payload
   useEffect(() => {
-    // Keep transaction note clean & alphanumeric for NPCI parser compatibility
-    const safeTeam = (teamName || 'FEST').replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
     const cleanUpi = OFFICIAL_UPI_ID.trim();
-    const encodedPayee = encodeURIComponent(OFFICIAL_PAYEE.trim());
+    const payeeName = OFFICIAL_PAYEE.trim();
 
-    // Universal static format: raw pa with literal @, no am parameter
-    // Standard format accepted by 100% of Indian UPI apps without dynamic-collect bank rejection
+    // Exact official merchant QR parameters matching the physical college poster & Canara Bank gateway:
+    // mc=8220 (Schools, Colleges and Universities)
+    // tr=1234567887654321
+    // tn=Pay to Merchant
+    // refUrl=http://npci.org/upi/schema/
     const upiUri =
       qrMode === 'universal'
-        ? `upi://pay?pa=${cleanUpi}&pn=${encodedPayee}&cu=INR`
-        : `upi://pay?pa=${cleanUpi}&pn=${encodedPayee}&am=${event.feeNumber}&cu=INR&tn=REG-${safeTeam}`;
+        ? `upi://pay?pa=${cleanUpi}&pn=${payeeName}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=0&mam=0&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`
+        : `upi://pay?pa=${cleanUpi}&pn=${payeeName}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=${event.feeNumber}&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`;
 
     QRCode.toDataURL(upiUri, {
       width: 320,
@@ -122,7 +123,7 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
     })
       .then((url) => setQrCodeDataUrl(url))
       .catch((err) => console.error('QR code error:', err));
-  }, [event.feeNumber, teamName, qrMode]);
+  }, [event.feeNumber, qrMode]);
 
   const handleCopyUpi = () => {
     navigator.clipboard.writeText(OFFICIAL_UPI_ID);
@@ -315,14 +316,13 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   };
 
   const isUtrInvalid = utrTouched && utrNumber.length > 0 && utrNumber.length !== 12;
-  const safeTeamName = (teamName || 'FEST').replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
   const formattedAmount = Number(event.feeNumber).toFixed(2);
   const cleanUpiId = OFFICIAL_UPI_ID.trim();
   const encodedPayee = encodeURIComponent(OFFICIAL_PAYEE.trim());
   const directUpiIntentUrl =
     qrMode === 'universal'
-      ? `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&cu=INR`
-      : `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&am=${formattedAmount}&cu=INR&tn=REG-${safeTeamName}`;
+      ? `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=0&mam=0&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`
+      : `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=${formattedAmount}&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`;
 
   return (
     <div className={`space-y-4 ${className}`}>
