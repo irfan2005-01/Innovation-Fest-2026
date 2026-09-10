@@ -49,23 +49,13 @@ export interface PaymentCardProps {
   className?: string;
 }
 
-// Resolve the active verified UPI ID
-// Explicitly ignores the obsolete/broken 'cnrb' ID even if set in Vercel's Environment Variables dashboard
-const getActiveUpi = () => {
-  const envUpi = typeof import.meta !== 'undefined' ? import.meta.env?.VITE_UPI_ID : '';
-  if (envUpi && !envUpi.includes('cnrb') && envUpi.includes('@')) {
-    return {
-      upiId: envUpi.trim(),
-      payee: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_UPI_NAME) || 'Shoeib',
-    };
-  }
-  return {
-    upiId: 'sshoeib17-4@okhdfcbank',
-    payee: 'Shoeib',
-  };
-};
+const OFFICIAL_UPI_ID =
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_UPI_ID) ||
+  '76206467008724@cnrb';
 
-const { upiId: OFFICIAL_UPI_ID, payee: OFFICIAL_PAYEE } = getActiveUpi();
+const OFFICIAL_PAYEE =
+  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_UPI_NAME) ||
+  'Lingaraj Appa Engineering College';
 
 export const PaymentCard: React.FC<PaymentCardProps> = ({
   event,
