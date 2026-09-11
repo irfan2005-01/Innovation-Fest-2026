@@ -245,3 +245,54 @@ html.light .bg-grid-pattern {
   }
 }
 
+/* Print optimization for official Entry Pass & Receipt */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #print-receipt-card,
+  #print-receipt-card * {
+    visibility: visible;
+  }
+
+  #print-receipt-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+    border-radius: 12px !important;
+  }
+
+  #print-receipt-card * {
+    color: #111827 !important;
+    background: transparent !important;
+    border-color: #d1d5db !important;
+  }
+
+  #print-receipt-card .text-white {
+    color: #000000 !important;
+    font-weight: bold !important;
+  }
+
+  #print-receipt-card .text-cyan-400,
+  #print-receipt-card .text-emerald-400,
+  #print-receipt-card .text-amber-300,
+  #print-receipt-card .text-amber-400 {
+    color: #0f172a !important;
+    font-weight: bold !important;
+  }
+}
+

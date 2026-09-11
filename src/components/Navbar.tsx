@@ -45,9 +45,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Logo Emblem */}
             <button
               onClick={() => handlePageClick('home')}
-              className="text-left group focus:outline-none"
+              className="text-left group focus:outline-none flex items-center gap-2.5"
               aria-label="Return to INNOVATION FEST 2026 Home"
             >
+              <img
+                src="/assets/laec-crest.png"
+                alt="LAEC Crest"
+                className="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-full border border-slate-700/80 bg-slate-900/90 shadow-sm shrink-0"
+              />
               <HackoraLogo size="md" />
             </button>
 

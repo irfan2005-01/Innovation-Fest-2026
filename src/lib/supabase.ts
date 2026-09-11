@@ -508,7 +508,53 @@ export async function fetchAllPayments(): Promise<{
         });
       }
     } catch (err: any) {
-      console.warn('Supabase fetch error:', err?.message);
+      console.warn('Supabase API fetch error:', err?.message);
+    }
+
+    // Direct client-side Supabase read fallback if serverless API is unavailable
+    if (!supabaseLive) {
+      try {
+        const { data: dbRows, error: dbErr } = await supabase
+          .from('payments')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!dbErr && Array.isArray(dbRows) && dbRows.length > 0) {
+          supabaseLive = true;
+          supabaseCount = dbRows.length;
+          supabaseRecords = dbRows.map((row: any) => ({
+            id: row.id,
+            registrationToken:
+              row.registration_token ||
+              `LAEC-IF26-${(row.event_type || 'EVNT').toUpperCase().slice(0, 4)}-${String(row.id).slice(0, 4)}`,
+            teamName: row.team_name || row.payer_name || 'Team Registered',
+            leaderName: row.leader_name || row.payer_name || 'Team Lead',
+            leaderEmail: row.leader_email || '—',
+            leaderPhone: row.leader_phone || '—',
+            collegeName: row.college_name || 'LAEC Bidar',
+            studentId: row.student_id,
+            branch: row.branch,
+            year: row.year,
+            eventType: row.event_type || 'hackora',
+            eventName: row.event_name || 'Hackora 2026',
+            amount: Number(row.amount) || 1200,
+            utrNumber: row.utr_number || '—',
+            payerName: row.payer_name || 'Participant',
+            payerUpiId: row.payer_upi_id || '—',
+            paymentScreenshotUrl: row.payment_screenshot_url || '',
+            payment_screenshot_url: row.payment_screenshot_url || '',
+            themeId: row.theme_id || 'General Track',
+            projectTitle: row.project_title || 'Innovation Project',
+            members: Array.isArray(row.members) ? row.members : [],
+            status: row.status || 'pending',
+            rejectionReason: row.rejection_reason,
+            created_at: row.created_at || new Date().toISOString(),
+            source: 'supabase' as const,
+          }));
+        }
+      } catch (directErr) {
+        console.warn('Direct Supabase fetch fallback error:', directErr);
+      }
     }
   }
 
@@ -674,4 +720,63 @@ export function exportPaymentsToCSV(records: PaymentRecord[]) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+/**
+ * Upload all local device records to Supabase Cloud Database
+ */
+export async function syncLocalPaymentsToSupabase(): Promise<{
+  success: boolean;
+  syncedCount: number;
+  error?: string;
+}> {
+  const localList = getStoredPayments();
+  if (!localList || localList.length === 0) {
+    return { success: true, syncedCount: 0 };
+  }
+
+  if (!isSupabaseConfigured) {
+    return { success: false, syncedCount: 0, error: 'Supabase is not configured.' };
+  }
+
+  let synced = 0;
+  for (const r of localList) {
+    try {
+      const cleanUtr = (r.utrNumber || '').trim();
+      const payload: any = {
+        registration_token: r.registrationToken,
+        event_type: r.eventType === 'expo' ? 'project_expo' : r.eventType,
+        event_name: r.eventName || 'Hackora 2026',
+        amount: Number(r.amount) || 1200,
+        payment_method: 'upi',
+        utr_number: cleanUtr || '000000000000',
+        payer_name: r.payerName || r.leaderName || 'Participant',
+        payer_upi_id: r.payerUpiId || 'participant@upi',
+        payment_screenshot_url: r.paymentScreenshotUrl || r.payment_screenshot_url || '',
+        status: r.status || 'pending',
+        team_name: r.teamName || 'Team',
+        college_name: r.collegeName || 'LAEC Bidar',
+        leader_name: r.leaderName || r.payerName,
+        leader_email: r.leaderEmail || '',
+        leader_phone: r.leaderPhone || '',
+        student_id: r.studentId || '',
+        branch: r.branch || '',
+        year: r.year || '',
+        theme_id: r.themeId || '',
+        project_title: r.projectTitle || '',
+        members: r.members || [],
+      };
+
+      const { error } = await supabase.from('payments').insert(payload);
+      if (!error) {
+        synced++;
+      } else {
+        console.warn('Sync notice for record:', error.message);
+      }
+    } catch (e: any) {
+      console.warn('Sync exception:', e?.message);
+    }
+  }
+
+  return { success: true, syncedCount: synced };
 }

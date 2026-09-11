@@ -316,13 +316,13 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
           </div>
 
           {/* QR Code & Payee Details */}
-          <div className="flex flex-col md:flex-row items-center gap-5 p-4 rounded-xl bg-slate-900 border border-slate-700">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 p-4 rounded-xl bg-slate-900 border border-slate-700">
             {/* Official College QR Code Image */}
-            <div className="p-3 rounded-2xl bg-white shadow-xl flex flex-col items-center justify-center shrink-0 w-full sm:w-56">
+            <div className="w-full sm:w-52 flex-shrink-0 flex flex-col items-center justify-center p-3.5 bg-white rounded-2xl shadow-xl border border-slate-200">
               <img
                 src="/assets/official-payment-qr.png"
                 alt="Official Canara Bank UPI QR Code"
-                className="w-48 h-48 sm:w-52 sm:h-52 object-contain rounded-lg"
+                className="w-44 h-44 sm:w-48 sm:h-48 max-w-[190px] max-h-[190px] object-contain rounded-lg block mx-auto"
               />
               <span className="text-[10px] font-mono text-slate-900 mt-2 font-black tracking-wider text-center">
                 OFFICIAL COLLEGE PAYMENT QR
@@ -333,16 +333,16 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
             </div>
 
             {/* Official UPI Details */}
-            <div className="space-y-2.5 flex-1 w-full text-xs font-mono">
+            <div className="space-y-3 flex-1 min-w-0 w-full text-xs font-mono">
               <div>
                 <div className="text-slate-400 text-[11px]">Beneficiary / Payee:</div>
-                <div className="font-bold text-white text-sm">{OFFICIAL_PAYEE}</div>
+                <div className="font-bold text-white text-sm break-words">{OFFICIAL_PAYEE}</div>
               </div>
 
               <div>
                 <div className="text-slate-400 text-[11px]">Official UPI ID:</div>
-                <div className="flex items-center gap-2 mt-1">
-                  <code className="px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-cyan-400 font-bold text-xs select-all">
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <code className="px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-cyan-400 font-bold text-xs select-all break-all">
                     {OFFICIAL_UPI_ID}
                   </code>
                   <button
@@ -366,7 +366,7 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
               </div>
 
               {/* Mobile Deep-Link */}
-              <div className="pt-1.5">
+              <div className="pt-1">
                 <a
                   href={directUpiIntentUrl}
                   className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-cyan-500/20 transition-all active:scale-[0.98]"
@@ -376,9 +376,9 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
                 </a>
               </div>
 
-              {/* Helpful Scanner Tip */}
+              {/* Verified Merchant Instructions */}
               <div className="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-500/20 text-[10.5px] text-cyan-200/90 leading-relaxed">
-                💡 <strong className="text-white">Scanner Tip:</strong> If Google Pay shows <em>&ldquo;Unable to scan QR. Temporary technical issue&rdquo;</em>, keep <strong className="text-white">Universal (Safe)</strong> selected and enter <strong className="text-emerald-400 font-bold">₹{event.feeNumber}</strong> manually when prompted.
+                💡 <strong className="text-white">Official Canara Bank Merchant Desk:</strong> Scan with any UPI app (Google Pay, PhonePe, Paytm, BHIM) and enter the registration fee (<strong className="text-emerald-400 font-bold">{event.feeDisplay}</strong>).
               </div>
 
               <div className="text-[10px] text-slate-400 pt-0.5">

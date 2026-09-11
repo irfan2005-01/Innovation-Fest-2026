@@ -9,7 +9,6 @@ import {
   MapPin,
   ArrowRight,
   ShieldCheck,
-  Terminal,
   Activity,
   Sparkles,
   ChevronRight,
@@ -128,7 +127,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
     prizePool: '₹5,000+',
     firstPrize: '₹3,000 1st Prize',
     format: 'Live Working Hardware Demonstration on Expo Floor',
-    teamSize: '1–4 Builders / Team',
+    teamSize: '1–2 Builders / Team',
     color: {
       primary: 'emerald',
       border: 'border-emerald-500/50',
@@ -428,40 +427,107 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
                 </div>
               </div>
 
-              {/* Right Column: Animated Cyber Terminal & Telemetry (5 cols) */}
+              {/* Right Column: Animated Logo Emblem & Telemetry (5 cols) */}
               <div className="lg:col-span-5 space-y-3">
-                {/* Cyber Terminal Window */}
-                <div className="rounded-2xl bg-slate-950 border border-slate-800/90 shadow-xl overflow-hidden font-mono text-left">
-                  {/* Window Bar */}
+                {/* Innovation Fest Emblem Showcase */}
+                <div className="relative rounded-2xl bg-slate-950 border border-slate-800/90 shadow-xl overflow-hidden">
+                  {/* Top Badge Bar */}
                   <div className="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                      <span className="ml-2 text-slate-300 font-semibold text-[10px]">
-                        terminal://laec.fest.engine
+                    <div className="flex items-center gap-2">
+                      <Sparkles className={`w-3.5 h-3.5 ${current.color.text}`} />
+                      <span className="text-slate-300 font-semibold text-[10px] uppercase tracking-wider">
+                        Innovation Fest 2026
                       </span>
                     </div>
-
-                    <div className="flex items-center gap-1.5 text-cyan-400 text-[10px]">
-                      <Terminal className="w-3 h-3" />
-                      <span>ONLINE</span>
+                    <div className="flex items-center gap-1.5 text-emerald-400 text-[10px] font-bold">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                      </span>
+                      <span>LIVE</span>
                     </div>
                   </div>
 
-                  {/* Terminal Output */}
-                  <div className="p-4 text-[11px] leading-relaxed text-slate-300 space-y-1.5 bg-slate-950/90 min-h-[140px]">
-                    {current.terminalLogs.map((log, i) => (
-                      <div key={i} className="flex items-start gap-1.5">
-                        <span className="text-cyan-400 select-none">&gt;</span>
-                        <span className={i === 0 ? current.color.text + ' font-bold' : 'text-slate-300'}>
-                          {log}
-                        </span>
+                  {/* Emblem Area */}
+                  <div className="relative flex flex-col items-center justify-center p-6 sm:p-8 min-h-[200px] bg-gradient-to-b from-slate-950/90 via-slate-950 to-slate-900/80">
+                    {/* Ambient Glow behind emblem */}
+                    <div className={`absolute inset-0 flex items-center justify-center pointer-events-none`}>
+                      <motion.div
+                        animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.55, 0.3] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                        className={`w-48 h-48 sm:w-56 sm:h-56 rounded-full blur-3xl ${
+                          activeTrack === 'hackora' ? 'bg-cyan-500/25' : activeTrack === 'ideathon' ? 'bg-purple-500/25' : 'bg-emerald-500/25'
+                        }`}
+                      />
+                    </div>
+
+                    {/* Rotating Outer Ring */}
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                      className="absolute w-44 h-44 sm:w-52 sm:h-52"
+                    >
+                      <svg viewBox="0 0 200 200" className="w-full h-full">
+                        <defs>
+                          <linearGradient id="emblem-ring-outer" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#00F2FE" />
+                            <stop offset="50%" stopColor="#8B5CF6" />
+                            <stop offset="100%" stopColor="#F97316" />
+                          </linearGradient>
+                        </defs>
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="url(#emblem-ring-outer)" strokeWidth="2" strokeDasharray="12 8" strokeLinecap="round" opacity="0.7" />
+                        <circle cx="100" cy="10" r="5" fill="#00F2FE" className="filter drop-shadow-[0_0_8px_#00F2FE]" />
+                        <circle cx="100" cy="190" r="4" fill="#F97316" className="filter drop-shadow-[0_0_8px_#F97316]" />
+                      </svg>
+                    </motion.div>
+
+                    {/* Counter-rotating Inner Ring */}
+                    <motion.div
+                      animate={{ rotate: -360 }}
+                      transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
+                      className="absolute w-32 h-32 sm:w-40 sm:h-40"
+                    >
+                      <svg viewBox="0 0 200 200" className="w-full h-full">
+                        <defs>
+                          <linearGradient id="emblem-ring-inner" x1="100%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#F97316" />
+                            <stop offset="50%" stopColor="#8B5CF6" />
+                            <stop offset="100%" stopColor="#00F2FE" />
+                          </linearGradient>
+                        </defs>
+                        <circle cx="100" cy="100" r="85" fill="none" stroke="url(#emblem-ring-inner)" strokeWidth="2.5" strokeDasharray="20 16" strokeLinecap="round" opacity="0.5" />
+                        <circle cx="185" cy="100" r="3.5" fill="#8B5CF6" className="filter drop-shadow-[0_0_6px_#8B5CF6]" />
+                      </svg>
+                    </motion.div>
+
+                    {/* Central IF Monogram */}
+                    <motion.div
+                      animate={{ scale: [0.95, 1.05, 0.95] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                      className="relative z-10 flex flex-col items-center"
+                    >
+                      <div className="text-4xl sm:text-5xl font-black font-display tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 via-violet-400 to-orange-400 select-none leading-none">
+                        IF
                       </div>
-                    ))}
-                    <div className="flex items-center gap-1 text-slate-500 pt-1">
-                      <span className="text-emerald-400 animate-pulse font-bold">_</span>
-                      <span className="text-[10px]">awaiting team arrival on 21 Sep...</span>
+                      <div className="text-[10px] sm:text-xs font-mono font-bold text-slate-400 tracking-[0.25em] mt-1 uppercase">
+                        2026
+                      </div>
+                    </motion.div>
+
+                    {/* Track-specific Stats Row */}
+                    <div className="relative z-10 mt-6 grid grid-cols-3 gap-2 w-full text-center font-mono text-[10px] sm:text-[11px]">
+                      <div className="p-2 rounded-lg bg-slate-900/80 border border-slate-800">
+                        <div className="text-slate-500 uppercase">Prize</div>
+                        <div className={`font-bold ${current.color.text}`}>{current.prizePool}</div>
+                      </div>
+                      <div className="p-2 rounded-lg bg-slate-900/80 border border-slate-800">
+                        <div className="text-slate-500 uppercase">Entry</div>
+                        <div className="font-bold text-white">{current.fee}</div>
+                      </div>
+                      <div className="p-2 rounded-lg bg-slate-900/80 border border-slate-800">
+                        <div className="text-slate-500 uppercase">Team</div>
+                        <div className="font-bold text-white">{current.teamSize}</div>
+                      </div>
                     </div>
                   </div>
                 </div>

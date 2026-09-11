@@ -85,6 +85,13 @@ export const Footer: React.FC<FooterProps> = ({
               </button>
               <span className="text-slate-700">•</span>
               <button
+                onClick={() => onNavigate('about')}
+                className="hover:text-cyan-400 transition-colors"
+              >
+                About LAEC
+              </button>
+              <span className="text-slate-700">•</span>
+              <button
                 onClick={() => onNavigate('events')}
                 className="hover:text-cyan-400 transition-colors"
               >
@@ -92,10 +99,31 @@ export const Footer: React.FC<FooterProps> = ({
               </button>
               <span className="text-slate-700">•</span>
               <button
+                onClick={() => onNavigate('themes')}
+                className="hover:text-cyan-400 transition-colors"
+              >
+                6 Themes
+              </button>
+              <span className="text-slate-700">•</span>
+              <button
                 onClick={() => onNavigate('schedule')}
                 className="hover:text-cyan-400 transition-colors"
               >
                 Schedule
+              </button>
+              <span className="text-slate-700">•</span>
+              <button
+                onClick={() => onNavigate('hospitality')}
+                className="hover:text-cyan-400 transition-colors"
+              >
+                Hospitality
+              </button>
+              <span className="text-slate-700">•</span>
+              <button
+                onClick={() => onNavigate('resources')}
+                className="hover:text-cyan-400 transition-colors"
+              >
+                Resources
               </button>
               <span className="text-slate-700">•</span>
               <button
@@ -109,7 +137,7 @@ export const Footer: React.FC<FooterProps> = ({
                 onClick={() => onNavigate('sponsors')}
                 className="hover:text-cyan-400 transition-colors"
               >
-                Title Sponsor
+                Sponsors & Partners
               </button>
             </div>
           </div>

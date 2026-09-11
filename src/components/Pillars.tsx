@@ -20,7 +20,7 @@ export const Pillars: React.FC = () => {
           badge="INNOVATION FRAMEWORK"
           title="Where Ideas Become"
           gradientTitle="Working Solutions"
-          description="Engineered for builders who thrive under pressure. HACKORA redefines the hackathon experience with a participant-first architecture designed to maximize execution and minimize friction."
+          description="Engineered for builders who thrive under pressure. Innovation Fest redefines the hackathon experience with a participant-first architecture designed to maximize execution and minimize friction."
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">

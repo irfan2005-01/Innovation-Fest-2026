@@ -30,15 +30,15 @@ export const SponsorModal: React.FC<SponsorModalProps> = ({ isOpen, onClose }) =
   const handleDeckDownload = () => {
     const deckContent = `
 ================================================================================
-                    HACKORA 2026 // SPONSORSHIP PROPOSAL
-             STATE-LEVEL 24-HOUR HACKATHON // ENGINEERS' DAY 2026
-           Organized by Lingaraj Appa Engineering College (LAEC), Bidar
-                               HACK THE AURA!
+               INNOVATION FEST 2026 // PARTNERSHIP PROPOSAL
+        ENGINEERS' DAY CELEBRATIONS 2026 (21–22 SEPTEMBER 2026)
+         Organized by Lingaraj Appa Engineering College (LAEC), Bidar
+          Featuring HACKORA 2026, IDEATHON 2026 & PROJECT EXPO 2026
 ================================================================================
 
 AUDIENCE & REACH:
-- 200+ Handpicked Student Engineers & Builders across Karnataka
-- Over 1,500+ Campus Footfall & Regional Tech Community Attention
+- 500+ Student Engineers, Innovators & Builders across Karnataka & VTU
+- Over 2,000+ Campus Footfall & Regional Tech Community Attention
 - Dedicated Social Media Reach across LinkedIn, Instagram, and VTU Hubs
 
 PARTNERSHIP TIERS:
@@ -47,7 +47,7 @@ PARTNERSHIP TIERS:
    - Logo on all VTU Certificates & Winner Trophies
    - Keynote Speaker Slot at Inauguration (15 Mins)
    - Exclusive On-Campus Recruitment & Technical Booth
-   - Complete Opt-in Resume Directory of all 200+ Builders
+   - Complete Opt-in Resume Directory of all Participants
 
 2. GOLD PARTNER (Front-End / Domain Partner) - ₹35,000 / In-kind Equivalent
    - Track Naming Rights (e.g. AI Track powered by [Your Brand])
@@ -61,15 +61,16 @@ PARTNERSHIP TIERS:
    - Social Media Shoutouts
 
 CONTACT FOR CUSTOM PACKAGES:
-- Faculty Sponsor Lead: Dr. M. S. Patil (LAEC Bidar)
-- Email: sponsors.hackora@laecbidar.ac.in | Phone: +91 94801 23456
+- Organizing Secretariat: Lingaraj Appa Engineering College (LAEC), Bidar
+- Email: laecplacement@laec.edu.in | WhatsApp: +91 82966 12843
+- Helpline Desk: +91 7019301927
 ================================================================================
     `;
     const blob = new Blob([deckContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'HACKORA_2026_Sponsorship_Deck.txt';
+    link.download = 'INNOVATION_FEST_2026_Sponsorship_Deck.txt';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -103,11 +104,11 @@ CONTACT FOR CUSTOM PACKAGES:
               <Briefcase className="w-6 h-6" />
             </span>
             <div>
-              <span className="text-xs font-mono text-nexora-orange uppercase tracking-wider">
+              <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">
                 Corporate Partnerships & Brand Alliances
               </span>
               <h3 className="text-2xl font-bold font-display text-white">
-                Partner with HACKORA 2026
+                Partner with Innovation Fest 2026
               </h3>
             </div>
           </div>
@@ -202,10 +203,10 @@ CONTACT FOR CUSTOM PACKAGES:
                   <span className="text-xs text-slate-400">
                     Prefer direct email? Reach out at{' '}
                     <a
-                      href="mailto:sponsors.hackora@laecbidar.ac.in"
-                      className="text-nexora-cyan hover:underline font-mono"
+                      href="mailto:laecplacement@laec.edu.in"
+                      className="text-cyan-400 hover:underline font-mono"
                     >
-                      sponsors.hackora@laecbidar.ac.in
+                      laecplacement@laec.edu.in
                     </a>
                   </span>
                 </div>
@@ -232,26 +233,26 @@ CONTACT FOR CUSTOM PACKAGES:
           ) : (
             <div className="space-y-5">
               <p className="text-sm text-slate-300 leading-relaxed">
-                Download the official 12-page comprehensive HACKORA 2026 Sponsorship Proposal containing stage branding packages, hackathon tracks, talent acquisition rights, and media metrics.
+                Download the official Innovation Fest 2026 Sponsorship Proposal containing stage branding packages, flagship tracks (Hackora, Ideathon, Project Expo), talent acquisition rights, and media metrics.
               </p>
 
               <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-2 text-xs font-mono text-slate-300">
-                <div className="text-nexora-cyan font-bold">• Platinum Tier: Keynote, Trophy Brand, 200+ Resume Access</div>
-                <div className="text-nexora-violet font-bold">• Gold Tier: Track naming, jury seat, stage booth</div>
-                <div className="text-nexora-orange font-bold">• Silver Tier: Digital presence, poster branding, swag inclusion</div>
+                <div className="text-cyan-400 font-bold">• Platinum Tier: Keynote, Trophy Brand, 500+ Resume Directory</div>
+                <div className="text-violet-400 font-bold">• Gold Tier: Track naming, jury seat, exhibition booth</div>
+                <div className="text-orange-400 font-bold">• Silver Tier: Digital presence, poster branding, swag inclusion</div>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
                 <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
-                  <Mail className="w-4 h-4 text-nexora-cyan" />
-                  <span>sponsors.hackora@laecbidar.ac.in</span>
+                  <Mail className="w-4 h-4 text-cyan-400" />
+                  <span>laecplacement@laec.edu.in</span>
                 </div>
                 <button
                   onClick={handleDeckDownload}
                   className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold text-slate-900 bg-brand-gradient hover:opacity-95 shadow-md shadow-cyan-500/20 transition-all"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Download Deck (PDF)</span>
+                  <span>Download Deck</span>
                 </button>
               </div>
             </div>

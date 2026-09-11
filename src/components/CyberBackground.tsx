@@ -156,6 +156,67 @@ export const CyberBackground: React.FC<CyberBackgroundProps> = ({ theme }) => {
         ))}
       </div>
 
+      {/* 7. FLOATING LOVE HEARTS ANIMATION */}
+      {/* Mobile: Static heart glows for zero overhead */}
+      <div className="md:hidden absolute inset-0 pointer-events-none overflow-hidden">
+        {HEARTS_MOBILE.map((h, i) => (
+          <div
+            key={`heart-m-${i}`}
+            className="absolute pointer-events-none"
+            style={{ left: `${h.x}%`, top: `${h.y}%`, opacity: h.opacity }}
+          >
+            <svg
+              width={h.size}
+              height={h.size}
+              viewBox="0 0 24 24"
+              fill={h.fill}
+              className={`filter ${h.glow}`}
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: Animated floating hearts drifting upward */}
+      <div className="hidden md:block absolute inset-0 pointer-events-none overflow-hidden">
+        {HEARTS.map((h, i) => (
+          <motion.div
+            key={`heart-${i}`}
+            initial={{
+              left: `${h.x}%`,
+              bottom: `${h.startY}%`,
+              opacity: 0,
+              scale: 0.5,
+            }}
+            animate={{
+              bottom: [`${h.startY}%`, `${h.startY + h.travel}%`],
+              x: [0, h.sway, -h.sway * 0.6, 0],
+              opacity: [0, h.opacity, h.opacity, 0],
+              scale: [0.5, 1, 1, 0.7],
+              rotate: [0, h.sway > 0 ? 15 : -15, h.sway > 0 ? -10 : 10, 0],
+            }}
+            transition={{
+              duration: h.duration,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: h.delay,
+            }}
+            className="absolute pointer-events-none"
+          >
+            <svg
+              width={h.size}
+              height={h.size}
+              viewBox="0 0 24 24"
+              fill={h.fill}
+              className={`filter ${h.glow}`}
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </motion.div>
+        ))}
+      </div>
+
       {/* 6. SUBTLE AMBIENT VIGNETTE / DEPTH SHADOW */}
       <div
         className="absolute inset-0 pointer-events-none transition-colors duration-700"
@@ -191,4 +252,29 @@ const PARTICLES = [
   { x: 48, y: 90, size: 2.5, duration: 14, delay: 1.1, sway: -15, opacity: 0.5, colorDark: 'bg-cyan-300', colorLight: 'bg-blue-500', glowDark: 'rgba(0, 242, 254, 0.5)' },
   { x: 64, y: 5, size: 3, duration: 16, delay: 0.7, sway: 18, opacity: 0.6, colorDark: 'bg-violet-400', colorLight: 'bg-purple-600', glowDark: 'rgba(139, 92, 246, 0.6)' },
   { x: 30, y: 8, size: 2, duration: 13, delay: 2.2, sway: -12, opacity: 0.5, colorDark: 'bg-cyan-400', colorLight: 'bg-cyan-600', glowDark: 'rgba(0, 242, 254, 0.5)' },
+];
+
+// Floating Love Hearts (Desktop Animated)
+const HEARTS = [
+  { x: 5, startY: -5, travel: 110, size: 14, duration: 16, delay: 0, sway: 30, opacity: 0.18, fill: 'rgba(236, 72, 153, 0.6)', glow: 'drop-shadow(0 0 6px rgba(236, 72, 153, 0.4))' },
+  { x: 15, startY: -8, travel: 115, size: 10, duration: 20, delay: 3, sway: -25, opacity: 0.14, fill: 'rgba(244, 114, 182, 0.5)', glow: 'drop-shadow(0 0 4px rgba(244, 114, 182, 0.3))' },
+  { x: 25, startY: -3, travel: 108, size: 16, duration: 22, delay: 7, sway: 35, opacity: 0.2, fill: 'rgba(139, 92, 246, 0.5)', glow: 'drop-shadow(0 0 8px rgba(139, 92, 246, 0.4))' },
+  { x: 38, startY: -6, travel: 112, size: 12, duration: 18, delay: 1.5, sway: -20, opacity: 0.16, fill: 'rgba(236, 72, 153, 0.55)', glow: 'drop-shadow(0 0 5px rgba(236, 72, 153, 0.35))' },
+  { x: 50, startY: -4, travel: 110, size: 18, duration: 24, delay: 5, sway: 28, opacity: 0.22, fill: 'rgba(251, 113, 133, 0.5)', glow: 'drop-shadow(0 0 10px rgba(251, 113, 133, 0.4))' },
+  { x: 62, startY: -7, travel: 115, size: 11, duration: 19, delay: 2, sway: -32, opacity: 0.15, fill: 'rgba(0, 242, 254, 0.4)', glow: 'drop-shadow(0 0 5px rgba(0, 242, 254, 0.3))' },
+  { x: 72, startY: -2, travel: 108, size: 15, duration: 21, delay: 8, sway: 22, opacity: 0.18, fill: 'rgba(236, 72, 153, 0.5)', glow: 'drop-shadow(0 0 7px rgba(236, 72, 153, 0.35))' },
+  { x: 82, startY: -5, travel: 112, size: 9, duration: 17, delay: 4, sway: -18, opacity: 0.12, fill: 'rgba(168, 85, 247, 0.45)', glow: 'drop-shadow(0 0 4px rgba(168, 85, 247, 0.3))' },
+  { x: 90, startY: -3, travel: 110, size: 13, duration: 23, delay: 6, sway: 26, opacity: 0.16, fill: 'rgba(244, 114, 182, 0.55)', glow: 'drop-shadow(0 0 6px rgba(244, 114, 182, 0.35))' },
+  { x: 95, startY: -6, travel: 115, size: 10, duration: 20, delay: 9, sway: -24, opacity: 0.14, fill: 'rgba(251, 113, 133, 0.45)', glow: 'drop-shadow(0 0 5px rgba(251, 113, 133, 0.3))' },
+  { x: 8, startY: -4, travel: 108, size: 8, duration: 15, delay: 10, sway: 15, opacity: 0.12, fill: 'rgba(139, 92, 246, 0.4)', glow: 'drop-shadow(0 0 3px rgba(139, 92, 246, 0.25))' },
+  { x: 45, startY: -8, travel: 118, size: 20, duration: 26, delay: 12, sway: -30, opacity: 0.15, fill: 'rgba(236, 72, 153, 0.4)', glow: 'drop-shadow(0 0 10px rgba(236, 72, 153, 0.3))' },
+];
+
+// Static hearts for mobile (no animation overhead)
+const HEARTS_MOBILE = [
+  { x: 10, y: 20, size: 10, opacity: 0.12, fill: 'rgba(236, 72, 153, 0.4)', glow: 'drop-shadow(0 0 3px rgba(236, 72, 153, 0.2))' },
+  { x: 85, y: 35, size: 8, opacity: 0.1, fill: 'rgba(244, 114, 182, 0.35)', glow: 'drop-shadow(0 0 2px rgba(244, 114, 182, 0.2))' },
+  { x: 30, y: 60, size: 12, opacity: 0.14, fill: 'rgba(139, 92, 246, 0.35)', glow: 'drop-shadow(0 0 4px rgba(139, 92, 246, 0.2))' },
+  { x: 70, y: 75, size: 9, opacity: 0.1, fill: 'rgba(251, 113, 133, 0.3)', glow: 'drop-shadow(0 0 3px rgba(251, 113, 133, 0.2))' },
+  { x: 50, y: 45, size: 11, opacity: 0.12, fill: 'rgba(236, 72, 153, 0.35)', glow: 'drop-shadow(0 0 3px rgba(236, 72, 153, 0.2))' },
 ];

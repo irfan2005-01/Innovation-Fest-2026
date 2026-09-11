@@ -44,11 +44,11 @@ export const SponsorsPage: React.FC<SponsorsPageProps> = ({
         </button>
 
         <a
-          href="mailto:sponsors.hackora@laecbidar.ac.in"
+          href="mailto:laecplacement@laec.edu.in"
           className="flex items-center gap-2 px-4 py-3 rounded-xl text-xs font-mono text-slate-400 hover:text-cyan-300 transition-colors"
         >
           <Mail className="w-4 h-4 text-amber-400" />
-          <span>sponsors.hackora@laecbidar.ac.in</span>
+          <span>laecplacement@laec.edu.in</span>
         </a>
       </div>
 

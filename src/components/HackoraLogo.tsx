@@ -112,12 +112,6 @@ export const HackoraLogo: React.FC<HackoraLogoProps> = ({
   if (size === 'hero') {
     return (
       <div className={`flex flex-col items-center text-center ${className}`}>
-        {/* Institutional Pill */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/80 text-xs sm:text-sm font-mono tracking-[0.2em] text-slate-300 uppercase mb-4 shadow-md backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-          <span>Lingaraj Appa Engineering College (LAEC), Bidar</span>
-        </div>
-
         {/* Big Typography with Animated Rotating 'O' in INNOVATION */}
         <div className="my-2 select-none">
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-display tracking-tight text-white flex items-center justify-center flex-wrap">
@@ -131,24 +125,45 @@ export const HackoraLogo: React.FC<HackoraLogoProps> = ({
           </div>
         </div>
 
-        {/* Tagline */}
+        {/* National Level Fest Badge */}
+        <div className="mt-4 mb-5">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/40 text-sm sm:text-base md:text-lg font-mono font-bold tracking-[0.2em] text-cyan-300 uppercase shadow-lg shadow-cyan-500/10 backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>National Tech Conclave • Hackora, Ideathon & Expo</span>
+          </div>
+        </div>
+
+        {/* Tagline & Organization Info */}
         {showTagline && (
-          <div className="mt-4 space-y-3">
-            <div className="flex items-center justify-center gap-3">
-              <span className="h-[1px] w-8 sm:w-16 bg-gradient-to-r from-transparent to-cyan-400" />
-              <span className="text-sm sm:text-base md:text-lg font-mono font-bold tracking-[0.25em] text-cyan-300 uppercase">
-                IDEAS TODAY. A BETTER TOMORROW.
+          <div className="mt-2 space-y-5">
+            {/* Organized By */}
+            <div className="flex flex-col items-center gap-1.5">
+              <span className="text-xs font-mono text-slate-500 uppercase tracking-[0.3em]">
+                Organized by
               </span>
-              <span className="h-[1px] w-8 sm:w-16 bg-gradient-to-l from-transparent to-orange-400" />
+              <span className="text-sm sm:text-base md:text-lg font-semibold text-white font-display tracking-wide">
+                Lingaraj Appa Engineering College, Bidar
+              </span>
             </div>
 
-            {/* Sub-strip featuring the three events */}
-            <div className="inline-flex items-center justify-center gap-2 sm:gap-4 px-4 py-1.5 rounded-2xl bg-slate-900/60 border border-slate-800 text-[11px] sm:text-xs font-mono text-slate-400 flex-wrap">
-              <span className="text-cyan-400 font-bold">HACKORA 2026 (24H Hackathon)</span>
-              <span>•</span>
-              <span className="text-purple-400 font-bold">IDEATHON 2026</span>
-              <span>•</span>
-              <span className="text-emerald-400 font-bold">PROJECT EXPO 2026</span>
+            {/* Divider */}
+            <div className="flex items-center justify-center gap-3">
+              <span className="h-[1px] w-8 sm:w-16 bg-gradient-to-r from-transparent to-violet-500/60" />
+              <span className="text-xs font-mono text-slate-500 uppercase tracking-[0.3em]">
+                In Collaboration with
+              </span>
+              <span className="h-[1px] w-8 sm:w-16 bg-gradient-to-l from-transparent to-violet-500/60" />
+            </div>
+
+            {/* Krishi Kalpa Foundation */}
+            <div className="flex flex-col items-center gap-1.5">
+              <span className="text-sm sm:text-base md:text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-display tracking-wide">
+                Krishi Kalpa Foundation
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] sm:text-xs font-mono text-emerald-300/80 tracking-wider">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                Recognized by the Government of Karnataka
+              </span>
             </div>
           </div>
         )}
