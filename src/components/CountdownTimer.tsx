@@ -51,13 +51,13 @@ export const CountdownTimer: React.FC = () => {
   return (
     <div className="w-full max-w-3xl mx-auto my-8">
       {/* Timer Bar Top Label */}
-      <div className="flex items-center justify-between px-3 py-1.5 mb-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs font-mono">
+      <div className="flex flex-wrap items-center justify-center sm:justify-between gap-2 px-3 py-1.5 mb-3 rounded-lg bg-slate-900/80 border border-slate-800 text-[11px] sm:text-xs font-mono text-center sm:text-left">
         <div className="flex items-center gap-2 text-slate-300">
-          <Clock className="w-3.5 h-3.5 text-nexora-cyan animate-spin-slow" />
+          <Clock className="w-3.5 h-3.5 text-nexora-cyan animate-spin-slow shrink-0" />
           <span>OFFICIAL SPRINT LAUNCH COUNTDOWN</span>
         </div>
         <div className="flex items-center gap-1.5 text-nexora-orange font-semibold">
-          <span className="w-2 h-2 rounded-full bg-nexora-orange animate-pulse"></span>
+          <span className="w-2 h-2 rounded-full bg-nexora-orange animate-pulse shrink-0"></span>
           <span>{timeLeft.isLive ? 'SPRINT IN PROGRESS' : 'KICK-OFF: 21 SEP 11:00 AM IST'}</span>
         </div>
       </div>
@@ -93,10 +93,10 @@ export const CountdownTimer: React.FC = () => {
       </div>
 
       {/* Target verification footnote */}
-      <div className="mt-3 text-center">
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
-          <Zap className="w-3 h-3 text-nexora-cyan" />
-          Synchronized to Indian Standard Time (IST UTC+5:30) • Central Computing Arena, LAEC
+      <div className="mt-3 text-center px-2">
+        <span className="inline-flex flex-wrap items-center justify-center gap-1.5 text-[10px] sm:text-[11px] font-mono text-slate-400 max-w-full text-center">
+          <Zap className="w-3 h-3 text-nexora-cyan shrink-0" />
+          <span>Synchronized to Indian Standard Time (IST UTC+5:30) • Central Computing Arena, LAEC</span>
         </span>
       </div>
     </div>

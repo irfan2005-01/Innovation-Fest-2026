@@ -327,7 +327,7 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   }, [directUpiIntentUrl]);
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-4 max-w-full overflow-hidden ${className}`}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Error Notification Banner */}
         {errorMessage && (

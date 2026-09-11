@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, FileText } from 'lucide-react';
 
@@ -9,6 +9,19 @@ interface BrochureModalProps {
 
 export const BrochureModal: React.FC<BrochureModalProps> = ({ isOpen, onClose }) => {
   const [activePage, setActivePage] = useState<'p1' | 'p2'>('p1');
+
+  useEffect(() => {
+    if (isOpen) {
+      const prevOverflow = document.body.style.overflow;
+      const prevTouchAction = document.body.style.touchAction;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        document.body.style.touchAction = prevTouchAction;
+      };
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -29,13 +42,13 @@ export const BrochureModal: React.FC<BrochureModalProps> = ({ isOpen, onClose })
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md overflow-y-auto overflow-x-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-2xl bg-slate-900 border border-slate-700 p-6 sm:p-8 shadow-2xl text-slate-100 flex flex-col"
+          className="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto overflow-x-hidden rounded-2xl bg-slate-900 border border-slate-700 p-4 sm:p-6 md:p-8 shadow-2xl text-slate-100 flex flex-col"
         >
           {/* Close button */}
           <button

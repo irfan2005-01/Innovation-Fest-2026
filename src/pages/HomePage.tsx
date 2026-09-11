@@ -40,9 +40,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-cyan-500/15 via-violet-600/15 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
 
         {/* Institutional Micro-badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/80 text-xs font-mono text-slate-300 mb-4 shadow-sm backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-          <span>Lingaraj Appa Engineering College (LAEC), Bidar</span>
+        <div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/80 text-[10px] sm:text-xs font-mono text-slate-300 mb-4 shadow-sm backdrop-blur-md max-w-full text-center">
+          <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse shrink-0" />
+          <span className="hidden sm:inline">Lingaraj Appa Engineering College (LAEC), Bidar</span>
+          <span className="sm:hidden">LAEC Bidar</span>
           <span className="text-slate-600">//</span>
           <span className="text-cyan-400 font-semibold">Engineers' Day Celebrations 2026</span>
         </div>

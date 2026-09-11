@@ -126,9 +126,9 @@ export const HackoraLogo: React.FC<HackoraLogoProps> = ({
         </div>
 
         {/* National Level Fest Badge */}
-        <div className="mt-4 mb-5">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/40 text-sm sm:text-base md:text-lg font-mono font-bold tracking-[0.2em] text-cyan-300 uppercase shadow-lg shadow-cyan-500/10 backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        <div className="mt-4 mb-5 max-w-full px-2">
+          <div className="inline-flex flex-wrap items-center justify-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/40 text-xs sm:text-base md:text-lg font-mono font-bold tracking-normal sm:tracking-[0.2em] text-cyan-300 uppercase shadow-lg shadow-cyan-500/10 backdrop-blur-md max-w-full text-center">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0"></span>
             <span>National Tech Conclave • Hackora, Ideathon & Expo</span>
           </div>
         </div>

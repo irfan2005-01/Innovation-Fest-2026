@@ -176,6 +176,20 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
     }
   }, [isOpen, step]);
 
+  // Lock body scroll and touch movements on mobile when modal is active
+  useEffect(() => {
+    if (isOpen) {
+      const prevOverflow = document.body.style.overflow;
+      const prevTouchAction = document.body.style.touchAction;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        document.body.style.touchAction = prevTouchAction;
+      };
+    }
+  }, [isOpen]);
+
   const triggerConfetti = () => {
     try {
       confetti({
@@ -295,7 +309,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-y-auto overflow-x-hidden">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -311,7 +325,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.96, y: 15 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-4xl rounded-3xl bg-slate-950 border border-slate-800 shadow-2xl p-5 sm:p-7 md:p-8 z-10 my-auto overflow-hidden max-h-[92vh] flex flex-col"
+          className="relative w-full max-w-4xl rounded-2xl sm:rounded-3xl bg-slate-950 border border-slate-800 shadow-2xl p-4 sm:p-7 md:p-8 z-10 my-auto overflow-hidden max-h-[92vh] flex flex-col"
         >
           {/* Subtle Ambient Glow */}
           <div
@@ -320,57 +334,62 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
           />
 
           {/* Modal Header */}
-          <div className="flex items-start justify-between border-b border-slate-800/80 pb-4 shrink-0">
-            <div className="flex items-center gap-3">
+          <div className="flex items-start justify-between border-b border-slate-800/80 pb-3 sm:pb-4 shrink-0 gap-2">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
               <RotatingO size="sm" />
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg sm:text-xl font-black font-display text-white tracking-wide">
-                    OFFICIAL EVENT REGISTRATION
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                  <h2 className="text-sm sm:text-lg md:text-xl font-black font-display text-white tracking-wide truncate">
+                    OFFICIAL REGISTRATION
                   </h2>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                  <span className="text-[9px] sm:text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
                     2026
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 font-mono mt-0.5">
+                <p className="text-[10px] sm:text-xs text-slate-400 font-mono mt-0.5 truncate">
                   Lingaraj Appa Engineering College, Bidar • Engineers' Day 2026
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               {storedRecords.length > 0 && (
                 <button
                   type="button"
                   onClick={() => setStep(step === 'history' ? 'details' : 'history')}
-                  className="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-[11px] font-mono text-cyan-400 flex items-center gap-1.5 transition-colors"
+                  className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-[10px] sm:text-[11px] font-mono text-cyan-400 flex items-center gap-1 sm:gap-1.5 transition-colors"
                 >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>{step === 'history' ? 'New Form' : `Receipts (${storedRecords.length})`}</span>
+                  <FileText className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <span className="hidden sm:inline">{step === 'history' ? 'New Form' : `Receipts (${storedRecords.length})`}</span>
+                  <span className="sm:hidden">{step === 'history' ? 'Form' : `(${storedRecords.length})`}</span>
                 </button>
               )}
               <button
                 type="button"
                 onClick={handleClose}
-                className="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                className="p-1 sm:p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                aria-label="Close"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
 
           {/* Step Indicator Progress Bar */}
           {step !== 'history' && (
-            <div className="pt-3 pb-2 shrink-0">
-              <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-2">
+            <div className="pt-2 sm:pt-3 pb-2 shrink-0">
+              <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-slate-400 mb-1.5">
                 <span className={step === 'details' ? 'text-cyan-400 font-bold' : ''}>
-                  1. Team & Academic Info
+                  <span className="sm:hidden">1. Details</span>
+                  <span className="hidden sm:inline">1. Team & Academic Info</span>
                 </span>
                 <span className={step === 'payment' ? 'text-cyan-400 font-bold' : ''}>
-                  2. UPI Payment & UTR
+                  <span className="sm:hidden">2. Payment</span>
+                  <span className="hidden sm:inline">2. UPI Payment & UTR</span>
                 </span>
                 <span className={step === 'receipt' ? 'text-emerald-400 font-bold' : ''}>
-                  3. Entry Pass & Receipt
+                  <span className="sm:hidden">3. Pass</span>
+                  <span className="hidden sm:inline">3. Entry Pass & Receipt</span>
                 </span>
               </div>
               <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
@@ -794,29 +813,29 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                 )}
 
                 {/* Bottom Fee Due Strip & Proceed Button */}
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-950/80 p-3.5 sm:p-4 rounded-2xl border border-slate-800">
                   <div>
-                    <span className="text-xs font-mono text-slate-400 block">Registration Fee Due:</span>
-                    <div className="flex items-baseline gap-2">
+                    <span className="text-[11px] sm:text-xs font-mono text-slate-400 block">Registration Fee Due:</span>
+                    <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 mt-0.5">
                       {isLaecDiscountEligible ? (
                         <>
-                          <span className="text-sm font-mono text-slate-500 line-through">
+                          <span className="text-xs sm:text-sm font-mono text-slate-500 line-through">
                             ₹1,200
                           </span>
-                          <span className="text-2xl font-black font-mono text-emerald-400">
+                          <span className="text-xl sm:text-2xl font-black font-mono text-emerald-400">
                             ₹1,080
                           </span>
-                          <span className="text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                          <span className="text-[9px] sm:text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
                             <Sparkles className="w-3 h-3 text-emerald-400" />
                             10% LAEC DISCOUNT
                           </span>
                         </>
                       ) : (
-                        <span className="text-2xl font-black font-mono text-cyan-400">
+                        <span className="text-xl sm:text-2xl font-black font-mono text-cyan-400">
                           {currentEvent.feeDisplay}
                         </span>
                       )}
-                      <span className="text-[11px] font-mono text-slate-400 ml-1">
+                      <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 ml-0.5">
                         ({currentEvent.name})
                       </span>
                     </div>

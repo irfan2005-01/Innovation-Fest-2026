@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Briefcase, Download, CheckCircle, Mail, Send } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -14,6 +14,19 @@ export const SponsorModal: React.FC<SponsorModalProps> = ({ isOpen, onClose }) =
   const [companyName, setCompanyName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [selectedTier, setSelectedTier] = useState('Platinum Partner');
+
+  useEffect(() => {
+    if (isOpen) {
+      const prevOverflow = document.body.style.overflow;
+      const prevTouchAction = document.body.style.touchAction;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        document.body.style.touchAction = prevTouchAction;
+      };
+    }
+  }, [isOpen]);
 
   const handleInquirySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,13 +94,13 @@ CONTACT FOR CUSTOM PACKAGES:
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md overflow-y-auto overflow-x-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-obsidian-900 border border-slate-700/80 p-6 sm:p-8 shadow-2xl text-slate-100"
+          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-2xl bg-obsidian-900 border border-slate-700/80 p-4 sm:p-6 md:p-8 shadow-2xl text-slate-100"
         >
           {/* Close button */}
           <button
