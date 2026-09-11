@@ -460,9 +460,7 @@ export async function fetchAllPayments(): Promise<{
           const screenshot =
             meta.screenshot_url ||
             row.payment_screenshot_url ||
-            (row.utr_number
-              ? `https://zdovivfymeopxxvxougi.supabase.co/storage/v1/object/public/payment-screenshots/receipts/utr_${row.utr_number}.png`
-              : '');
+            '';
 
           const teamMembersList =
             meta.members && Array.isArray(meta.members) && meta.members.length > 0
@@ -743,6 +741,7 @@ export async function syncLocalPaymentsToSupabase(): Promise<{
   for (const r of localList) {
     try {
       const cleanUtr = (r.utrNumber || '').trim();
+      const screenshot = r.paymentScreenshotUrl || r.payment_screenshot_url || '';
       const payload: any = {
         registration_token: r.registrationToken,
         event_type: r.eventType === 'expo' ? 'project_expo' : r.eventType,
@@ -752,7 +751,7 @@ export async function syncLocalPaymentsToSupabase(): Promise<{
         utr_number: cleanUtr || '000000000000',
         payer_name: r.payerName || r.leaderName || 'Participant',
         payer_upi_id: r.payerUpiId || 'participant@upi',
-        payment_screenshot_url: r.paymentScreenshotUrl || r.payment_screenshot_url || '',
+        payment_screenshot_url: screenshot,
         status: r.status || 'pending',
         team_name: r.teamName || 'Team',
         college_name: r.collegeName || 'LAEC Bidar',
@@ -767,6 +766,25 @@ export async function syncLocalPaymentsToSupabase(): Promise<{
         members: r.members || [],
       };
 
+      if (cleanUtr && cleanUtr !== '—') {
+        const { data: existing } = await supabase
+          .from('payments')
+          .select('id, payment_screenshot_url')
+          .eq('utr_number', cleanUtr)
+          .maybeSingle();
+
+        if (existing) {
+          if (!existing.payment_screenshot_url && screenshot) {
+            await supabase
+              .from('payments')
+              .update({ payment_screenshot_url: screenshot })
+              .eq('id', existing.id);
+            synced++;
+          }
+          continue;
+        }
+      }
+
       const { error } = await supabase.from('payments').insert(payload);
       if (!error) {
         synced++;
@@ -779,4 +797,189 @@ export async function syncLocalPaymentsToSupabase(): Promise<{
   }
 
   return { success: true, syncedCount: synced };
+}
+
+/**
+ * Parse CSV text into array of key-value objects handling multiline quoted fields
+ */
+export function parseCSV(csvText: string): Record<string, string>[] {
+  const rows: string[][] = [];
+  let currentRow: string[] = [];
+  let currentField = '';
+  let insideQuotes = false;
+
+  for (let i = 0; i < csvText.length; i++) {
+    const char = csvText[i];
+    const nextChar = csvText[i + 1];
+
+    if (char === '"') {
+      if (insideQuotes && nextChar === '"') {
+        currentField += '"';
+        i++; // skip escaped quote
+      } else {
+        insideQuotes = !insideQuotes;
+      }
+    } else if (char === ',' && !insideQuotes) {
+      currentRow.push(currentField);
+      currentField = '';
+    } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+      if (char === '\r' && nextChar === '\n') {
+        i++;
+      }
+      currentRow.push(currentField);
+      if (currentRow.some((f) => f.trim().length > 0)) {
+        rows.push(currentRow);
+      }
+      currentRow = [];
+      currentField = '';
+    } else {
+      currentField += char;
+    }
+  }
+  if (currentField.length > 0 || currentRow.length > 0) {
+    currentRow.push(currentField);
+    rows.push(currentRow);
+  }
+
+  if (rows.length < 2) return [];
+
+  const headers = rows[0].map((h) => h.trim());
+  const data: Record<string, string>[] = [];
+
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+    const record: Record<string, string> = {};
+    headers.forEach((header, index) => {
+      record[header] = row[index] !== undefined ? row[index] : '';
+    });
+    data.push(record);
+  }
+
+  return data;
+}
+
+/**
+ * Import payment records from an exported CSV file
+ */
+export async function importPaymentsFromCSV(csvText: string): Promise<{
+  success: boolean;
+  count: number;
+  error?: string;
+}> {
+  try {
+    const parsed = parseCSV(csvText);
+    if (!parsed || parsed.length === 0) {
+      return { success: false, count: 0, error: 'No valid rows found in CSV.' };
+    }
+
+    const localList = getStoredPayments();
+    const existingMap = new Map<string, PaymentRecord>();
+    localList.forEach((r) => {
+      const key = (r.utrNumber || r.registrationToken || r.id).trim();
+      existingMap.set(key, r);
+    });
+
+    let importedCount = 0;
+
+    for (const row of parsed) {
+      const utr = (row['UTR Reference'] || row['utr_number'] || '').trim();
+      const token = (row['Registration Token'] || row['registration_token'] || '').trim();
+      const screenshot = (row['Payment Screenshot URL'] || row['payment_screenshot_url'] || '').trim();
+      const eventName = row['Event'] || row['event_name'] || 'Hackora 2026';
+      const eventType = eventName.toLowerCase().includes('idea')
+        ? 'ideathon'
+        : eventName.toLowerCase().includes('expo')
+        ? 'project_expo'
+        : 'hackora';
+
+      const key = utr || token || `import_${Date.now()}_${Math.random()}`;
+
+      const paymentRecord: PaymentRecord = {
+        id: `csv_${utr || token || Date.now()}`,
+        registrationToken: token || `LAEC-IF26-HACK-${Math.floor(1000 + Math.random() * 9000)}`,
+        teamName: row['Team Name'] || row['team_name'] || 'Imported Team',
+        leaderName: row['Leader Name'] || row['leader_name'] || 'Participant',
+        leaderEmail: row['Leader Email'] || row['leader_email'] || '',
+        leaderPhone: row['Leader Phone'] || row['leader_phone'] || '',
+        collegeName: row['College Name'] || row['college_name'] || 'LAEC Bidar',
+        studentId: row['Leader USN/ID'] || row['student_id'] || '',
+        branch: row['Branch'] || row['branch'] || '',
+        year: row['Year'] || row['year'] || '',
+        eventType: eventType as any,
+        eventName: eventName,
+        amount: Number(row['Amount (INR)'] || row['amount']) || 1200,
+        utrNumber: utr || '—',
+        payerName: row['Payer Name'] || row['payer_name'] || row['Leader Name'] || 'Participant',
+        payerUpiId: row['Payer UPI ID'] || row['payer_upi_id'] || '',
+        paymentScreenshotUrl: screenshot,
+        payment_screenshot_url: screenshot,
+        themeId: row['Theme / Track'] || row['theme_id'] || 'General Track',
+        projectTitle: row['Project Title'] || row['project_title'] || 'Innovation Project',
+        members: [],
+        status: ((row['Verification Status'] || row['status'] || 'verified').toLowerCase() as any),
+        created_at: row['Registration Date'] || new Date().toISOString(),
+        source: 'local_fallback',
+      };
+
+      existingMap.set(key, paymentRecord);
+      importedCount++;
+
+      // If Supabase is configured, also update Supabase cloud
+      if (isSupabaseConfigured && utr) {
+        try {
+          const { data: existingDb } = await supabase
+            .from('payments')
+            .select('id, payment_screenshot_url')
+            .eq('utr_number', utr)
+            .maybeSingle();
+
+          if (existingDb) {
+            if (screenshot && screenshot !== existingDb.payment_screenshot_url) {
+              await supabase
+                .from('payments')
+                .update({ payment_screenshot_url: screenshot })
+                .eq('id', existingDb.id);
+            }
+          } else {
+            await supabase.from('payments').insert({
+              registration_token: paymentRecord.registrationToken,
+              event_type: eventType,
+              event_name: eventName,
+              amount: paymentRecord.amount,
+              payment_method: 'upi',
+              utr_number: utr,
+              payer_name: paymentRecord.payerName,
+              payer_upi_id: paymentRecord.payerUpiId,
+              payment_screenshot_url: screenshot,
+              status: paymentRecord.status,
+              team_name: paymentRecord.teamName,
+              college_name: paymentRecord.collegeName,
+              leader_name: paymentRecord.leaderName,
+              leader_email: paymentRecord.leaderEmail,
+              leader_phone: paymentRecord.leaderPhone,
+              student_id: paymentRecord.studentId,
+              branch: paymentRecord.branch,
+              year: paymentRecord.year,
+              theme_id: paymentRecord.themeId,
+              project_title: paymentRecord.projectTitle,
+              members: [],
+            });
+          }
+        } catch (dbErr) {
+          console.warn('Supabase sync notice during CSV import:', dbErr);
+        }
+      }
+    }
+
+    const updatedList = Array.from(existingMap.values());
+    try {
+      localStorage.setItem('laec_fest_payments', JSON.stringify(updatedList));
+    } catch (storeErr) {
+      console.warn('LocalStorage write notice:', storeErr);
+    }
+
+    return { success: true, count: importedCount };
+  } catch (err: any) {
+    return { success: false, count: 0, error: err?.message || 'Failed to import CSV.' };
+  }
 }

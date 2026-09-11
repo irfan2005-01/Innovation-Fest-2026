@@ -22,12 +22,14 @@ import {
   Eye,
   ExternalLink,
   UploadCloud,
+  Upload,
 } from 'lucide-react';
 import {
   fetchAllPayments,
   updatePaymentStatus,
   deletePaymentRecord,
   exportPaymentsToCSV,
+  importPaymentsFromCSV,
   syncLocalPaymentsToSupabase,
   PaymentRecord,
   isSupabaseConfigured,
@@ -93,9 +95,35 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
       }
     } catch (e: any) {
       setActionSuccessMessage('Sync error: ' + (e?.message || 'Check database connection'));
-    } finally {
       setIsSyncing(false);
       setTimeout(() => setActionSuccessMessage(null), 4500);
+    }
+  };
+
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImportCSV = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsImporting(true);
+    try {
+      const text = await file.text();
+      const res = await importPaymentsFromCSV(text);
+      if (res.success) {
+        setActionSuccessMessage(`Successfully imported ${res.count} registration(s) with payment screenshots!`);
+        await loadData();
+      } else {
+        setActionSuccessMessage(`Import notice: ${res.error || 'Failed to parse CSV file.'}`);
+      }
+    } catch (err: any) {
+      setActionSuccessMessage(`Import error: ${err?.message || 'Could not read CSV file.'}`);
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      setTimeout(() => setActionSuccessMessage(null), 5000);
     }
   };
 
@@ -385,6 +413,24 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
               <span>{isSyncing ? 'Uploading...' : `Upload ${localRecordsCount} to Cloud`}</span>
             </button>
           )}
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept=".csv"
+            className="hidden"
+            onChange={handleImportCSV}
+          />
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isImporting}
+            className="px-3.5 py-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-300 text-xs font-mono font-bold flex items-center gap-1.5 transition-colors disabled:opacity-40"
+            title="Import registrations from an exported CSV file"
+          >
+            <Upload className={`w-4 h-4 ${isImporting ? 'animate-bounce' : ''}`} />
+            <span>{isImporting ? 'Importing...' : 'Import CSV'}</span>
+          </button>
 
           <button
             onClick={() => exportPaymentsToCSV(filteredRecords)}
@@ -787,7 +833,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
 
                       {/* Screenshot Proof Thumbnail */}
                       <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
-                        {r.paymentScreenshotUrl ? (
+                        {r.paymentScreenshotUrl && !imageErrors[r.id] ? (
                           <button
                             type="button"
                             onClick={() => setPreviewImage(r.paymentScreenshotUrl || null)}
@@ -797,6 +843,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                             <img
                               src={r.paymentScreenshotUrl}
                               alt="Payment proof"
+                              onError={() => setImageErrors((prev) => ({ ...prev, [r.id]: true }))}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                               loading="lazy"
                             />
@@ -805,7 +852,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                             </div>
                           </button>
                         ) : (
-                          <span className="text-[10px] text-slate-500 italic">No proof</span>
+                          <span className="text-[10px] text-slate-500 italic">
+                            {imageErrors[r.id] ? 'No proof file' : 'No proof'}
+                          </span>
                         )}
                       </td>
 
@@ -980,7 +1029,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                 )}
 
                 {/* Payment Screenshot Proof Card */}
-                {selectedRecord.paymentScreenshotUrl ? (
+                {selectedRecord.paymentScreenshotUrl && !imageErrors[selectedRecord.id] ? (
                   <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 col-span-2 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] text-slate-400 block uppercase font-mono font-bold flex items-center gap-1.5">
@@ -1003,6 +1052,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                       <img
                         src={selectedRecord.paymentScreenshotUrl}
                         alt="Payment proof screenshot"
+                        onError={() => setImageErrors((prev) => ({ ...prev, [selectedRecord.id]: true }))}
                         className="max-h-60 max-w-full object-contain rounded-lg"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-xs text-cyan-300 font-bold">
@@ -1013,7 +1063,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                   </div>
                 ) : (
                   <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 col-span-2 text-slate-500 text-xs italic">
-                    No payment screenshot uploaded for this registration.
+                    {imageErrors[selectedRecord.id]
+                      ? 'Payment screenshot file could not be loaded or is unavailable.'
+                      : 'No payment screenshot uploaded for this registration.'}
                   </div>
                 )}
 
