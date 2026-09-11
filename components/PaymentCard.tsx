@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import QRCode from 'qrcode';
 import {
   QrCode,
   CreditCard,
@@ -12,6 +13,7 @@ import {
   ShieldCheck,
   X,
   Loader2,
+  Sparkles,
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../src/lib/supabase';
 import { submitPaymentAction } from '../lib/actions/payment';
@@ -23,6 +25,9 @@ export interface PaymentCardProps {
     feeNumber: number;
     feeDisplay: string;
     accent?: string;
+    isDiscountApplied?: boolean;
+    originalFeeDisplay?: string;
+    discountLabel?: string;
   };
   teamName: string;
   collegeName?: string;
@@ -80,6 +85,8 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   const [payerUpiId, setPayerUpiId] = useState('');
   const [utrNumber, setUtrNumber] = useState('');
   const [utrTouched, setUtrTouched] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [showBankStandee, setShowBankStandee] = useState(false);
 
   // Screenshot Upload State
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
@@ -287,7 +294,37 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
   const isUtrInvalid = utrTouched && utrNumber.length > 0 && utrNumber.length !== 12;
   const cleanUpiId = OFFICIAL_UPI_ID.trim();
   const encodedPayee = encodeURIComponent(OFFICIAL_PAYEE.trim());
-  const directUpiIntentUrl = `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&mc=8220&tr=1234567887654321&tn=Pay%20to%20Merchant&am=0&mam=0&cu=INR&refUrl=http%3A%2F%2Fnpci.org%2Fupi%2Fschema%2F`;
+  const feeAmount = Number(event.feeNumber) || 1200;
+  const formattedAmount = feeAmount.toFixed(2);
+  const cleanTeamCode = (teamName || 'TEAM').replace(/[^a-zA-Z0-9]/g, '').slice(0, 15);
+  const transactionNote = encodeURIComponent(`IF26 ${event.name} ${cleanTeamCode}`);
+
+  // NPCI UPI URI with auto-entered & locked amount (am = mam locks the amount):
+  const directUpiIntentUrl = `upi://pay?pa=${cleanUpiId}&pn=${encodedPayee}&mc=8220&am=${formattedAmount}&mam=${formattedAmount}&cu=INR&tn=${transactionNote}`;
+
+  useEffect(() => {
+    let isMounted = true;
+    QRCode.toDataURL(
+      directUpiIntentUrl,
+      {
+        width: 320,
+        margin: 1.5,
+        color: {
+          dark: '#020617',
+          light: '#FFFFFF',
+        },
+        errorCorrectionLevel: 'M',
+      },
+      (err, url) => {
+        if (!err && url && isMounted) {
+          setQrDataUrl(url);
+        }
+      }
+    );
+    return () => {
+      isMounted = false;
+    };
+  }, [directUpiIntentUrl]);
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -305,32 +342,81 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
 
         <div className="p-4 sm:p-5 rounded-2xl bg-slate-950/90 border border-cyan-500/30 space-y-4">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
               <QrCode className="w-4 h-4" />
               <span>Official UPI Payment Desk — {event.name}</span>
             </span>
-            <span className="text-xs font-mono px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
-              Fee: {event.feeDisplay}
-            </span>
+            <div className="flex items-center gap-2">
+              {event.originalFeeDisplay && event.isDiscountApplied && (
+                <span className="text-xs font-mono text-slate-500 line-through">
+                  {event.originalFeeDisplay}
+                </span>
+              )}
+              <span
+                className={`text-xs font-mono px-3 py-1 rounded-full border font-bold flex items-center gap-1.5 ${
+                  event.isDiscountApplied
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                    : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
+                }`}
+              >
+                {event.isDiscountApplied && <Sparkles className="w-3.5 h-3.5 text-emerald-400" />}
+                <span>Fee: {event.feeDisplay} {event.isDiscountApplied ? '(10% LAEC Discount)' : ''}</span>
+              </span>
+            </div>
           </div>
 
           {/* QR Code & Payee Details */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 p-4 rounded-xl bg-slate-900 border border-slate-700">
-            {/* Official College QR Code Image */}
-            <div className="w-full sm:w-52 flex-shrink-0 flex flex-col items-center justify-center p-3.5 bg-white rounded-2xl shadow-xl border border-slate-200">
-              <img
-                src="/assets/official-payment-qr.png"
-                alt="Official Canara Bank UPI QR Code"
-                className="w-44 h-44 sm:w-48 sm:h-48 max-w-[190px] max-h-[190px] object-contain rounded-lg block mx-auto"
-              />
-              <span className="text-[10px] font-mono text-slate-900 mt-2 font-black tracking-wider text-center">
-                OFFICIAL COLLEGE PAYMENT QR
-              </span>
-              <span className="text-[9px] font-mono text-emerald-700 font-semibold mt-0.5 text-center">
-                ✓ Canara Bank Merchant Gateway
-              </span>
-            </div>
+            {/* Dynamic Locked Amount QR Code */}
+            {showBankStandee ? (
+              <div className="w-full sm:w-56 flex-shrink-0 flex flex-col items-center justify-center p-3.5 bg-white rounded-2xl shadow-xl border border-slate-200">
+                <img
+                  src="/assets/official-payment-qr.png"
+                  alt="Official Canara Bank UPI Standee"
+                  className="w-44 h-44 sm:w-48 sm:h-48 max-w-[190px] max-h-[190px] object-contain rounded-lg block mx-auto"
+                />
+                <span className="text-[10px] font-mono text-slate-900 mt-2 font-black tracking-wider text-center">
+                  PHYSICAL BANK STANDEE
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowBankStandee(false)}
+                  className="text-[9.5px] font-mono text-cyan-700 hover:text-cyan-900 font-bold underline mt-1 text-center"
+                >
+                  ← Switch to Auto-Amount QR (₹{feeAmount} Locked)
+                </button>
+              </div>
+            ) : (
+              <div className="w-full sm:w-56 flex-shrink-0 flex flex-col items-center justify-center p-3.5 bg-white rounded-2xl shadow-xl border-2 border-emerald-500/50">
+                {qrDataUrl ? (
+                  <img
+                    src={qrDataUrl}
+                    alt={`UPI QR Code for ₹${feeAmount}`}
+                    className="w-44 h-44 sm:w-48 sm:h-48 max-w-[190px] max-h-[190px] object-contain rounded-lg block mx-auto"
+                  />
+                ) : (
+                  <div className="w-44 h-44 flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-cyan-600 animate-spin" />
+                  </div>
+                )}
+                <div className="mt-2 text-center w-full">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-mono font-black tracking-wider">
+                    🔒 Auto-Filled: ₹{feeAmount} (Locked)
+                  </span>
+                  <span className="block text-[9px] font-mono text-slate-600 mt-0.5 font-semibold">
+                    Amount is fixed & cannot be modified
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowBankStandee(true)}
+                    className="text-[9px] font-mono text-slate-500 underline mt-1 hover:text-slate-800 block mx-auto"
+                  >
+                    View Bank Standee Photo
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Official UPI Details */}
             <div className="space-y-3 flex-1 min-w-0 w-full text-xs font-mono">
@@ -369,16 +455,16 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
               <div className="pt-1">
                 <a
                   href={directUpiIntentUrl}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-cyan-500/20 transition-all active:scale-[0.98]"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600 hover:opacity-95 text-white font-bold text-xs shadow-lg shadow-cyan-500/20 transition-all active:scale-[0.98]"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Tap to Pay on Mobile App</span>
+                  <span>Tap to Pay ₹{feeAmount} on Mobile UPI App</span>
                 </a>
               </div>
 
               {/* Verified Merchant Instructions */}
-              <div className="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-500/20 text-[10.5px] text-cyan-200/90 leading-relaxed">
-                💡 <strong className="text-white">Official Canara Bank Merchant Desk:</strong> Scan with any UPI app (Google Pay, PhonePe, Paytm, BHIM) and enter the registration fee (<strong className="text-emerald-400 font-bold">{event.feeDisplay}</strong>).
+              <div className="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-[10.5px] text-emerald-200/90 leading-relaxed">
+                🔒 <strong className="text-white">Fixed Amount Gateway:</strong> When you scan the QR or tap to pay, your UPI app (Google Pay, PhonePe, Paytm, BHIM) will automatically enter <strong className="text-emerald-300 font-bold">{event.feeDisplay}</strong> as a locked, non-editable amount.
               </div>
 
               <div className="text-[10px] text-slate-400 pt-0.5">
@@ -406,7 +492,7 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
                   required
                   value={payerName}
                   onChange={(e) => setPayerName(e.target.value)}
-                  placeholder="e.g., Rahul Sharma"
+                  placeholder="Enter payer full name"
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
                 />
                 <span className="text-[10px] text-slate-500 mt-0.5 block">
@@ -423,11 +509,11 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
                   required
                   value={payerUpiId}
                   onChange={(e) => setPayerUpiId(e.target.value)}
-                  placeholder="e.g., rahul@okhdfcbank"
+                  placeholder="Enter UPI ID"
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
                 />
                 <span className="text-[10px] text-slate-500 mt-0.5 block">
-                  Must contain '@' (e.g. user@oksbi)
+                  Must contain '@'
                 </span>
               </div>
             </div>
@@ -459,7 +545,7 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
                 value={utrNumber}
                 onChange={handleUtrChange}
                 onBlur={() => setUtrTouched(true)}
-                placeholder="e.g., 425619381029"
+                placeholder="Enter 12-digit UTR reference number"
                 className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-950 text-cyan-300 font-mono text-sm tracking-widest font-bold focus:outline-none border transition-colors ${
                   isUtrInvalid
                     ? 'border-red-500 ring-1 ring-red-500'

@@ -156,10 +156,17 @@ export const HackoraLogo: React.FC<HackoraLogoProps> = ({
             </div>
 
             {/* Krishi Kalpa Foundation */}
-            <div className="flex flex-col items-center gap-1.5">
-              <span className="text-sm sm:text-base md:text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-display tracking-wide">
-                Krishi Kalpa Foundation
-              </span>
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex items-center justify-center gap-3">
+                <img
+                  src="/assets/krishi-kalpa-logo.png"
+                  alt="Krishi Kalpa Logo"
+                  className="h-9 sm:h-12 w-auto object-contain rounded-lg bg-white/95 px-2 py-1 shadow-md border border-emerald-500/30"
+                />
+                <span className="text-sm sm:text-base md:text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 font-display tracking-wide">
+                  Krishi Kalpa Foundation
+                </span>
+              </div>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] sm:text-xs font-mono text-emerald-300/80 tracking-wider">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                 Recognized by the Government of Karnataka

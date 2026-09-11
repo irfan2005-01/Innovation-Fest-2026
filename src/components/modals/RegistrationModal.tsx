@@ -18,6 +18,7 @@ import {
   FileText,
   Users,
   GraduationCap,
+  Sparkles,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import {
@@ -270,6 +271,27 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
   if (!isOpen) return null;
 
   const currentEvent = EVENTS[selectedEvent];
+
+  // 10% Discount for LAEC College Students on Hackathon only:
+  // Identified when USN contains "LA" (case-insensitive, e.g. 3LA23CS106)
+  const isLeaderLaec = (leaderUsn || '').toUpperCase().includes('LA');
+  const isMemberLaec = members
+    .slice(0, Math.max(0, teamSize - 1))
+    .some((m) => (m.usn || '').toUpperCase().includes('LA'));
+  const isLaecStudent = isLeaderLaec || isMemberLaec;
+  const isHackathon = selectedEvent === 'hackora';
+  const isLaecDiscountEligible = isHackathon && isLaecStudent;
+
+  const calculatedFeeNumber = isLaecDiscountEligible ? 1080 : currentEvent.feeNumber;
+  const calculatedFeeDisplay = isLaecDiscountEligible ? '₹1,080' : currentEvent.feeDisplay;
+
+  const paymentEvent = {
+    ...currentEvent,
+    feeNumber: calculatedFeeNumber,
+    feeDisplay: calculatedFeeDisplay,
+    isDiscountApplied: isLaecDiscountEligible,
+    originalFeeDisplay: isLaecDiscountEligible ? '₹1,200' : undefined,
+  };
 
   return (
     <AnimatePresence>
@@ -553,7 +575,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         required
                         value={ideathonSolutionTitle}
                         onChange={(e) => setIdeathonSolutionTitle(e.target.value)}
-                        placeholder="e.g., Micro-Solar Cold Storage Chain for Rural Farmers"
+                        placeholder="Enter proposed solution or pitch title"
                         className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-purple-500/40 text-white text-xs font-mono focus:border-purple-400 focus:outline-none"
                       />
                       <p className="text-[10px] font-mono text-slate-400 mt-1.5">
@@ -573,7 +595,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         required
                         value={expoModelTitle}
                         onChange={(e) => setExpoModelTitle(e.target.value)}
-                        placeholder="e.g., Dual-Axis Smart Solar Tracker Prototype"
+                        placeholder="Enter working model display title"
                         className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-emerald-500/40 text-white text-xs font-mono focus:border-emerald-400 focus:outline-none"
                       />
                       <p className="text-[10px] font-mono text-slate-400 mt-1.5">
@@ -602,7 +624,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         required
                         value={leaderName}
                         onChange={(e) => setLeaderName(e.target.value)}
-                        placeholder="e.g., Rahul Sharma"
+                        placeholder="Enter team leader full name"
                         className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
                       />
                     </div>
@@ -616,7 +638,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         required
                         value={leaderEmail}
                         onChange={(e) => setLeaderEmail(e.target.value)}
-                        placeholder="e.g., rahul@example.com"
+                        placeholder="Enter email address"
                         className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
                       />
                     </div>
@@ -638,16 +660,28 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-mono text-slate-300 mb-1">
-                        USN / Student ID *
-                      </label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-[11px] font-mono text-slate-300">
+                          USN / Student ID *
+                        </label>
+                        {isHackathon && isLeaderLaec && (
+                          <span className="text-[9px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30 inline-flex items-center gap-1">
+                            <Sparkles className="w-2.5 h-2.5 text-emerald-400" />
+                            10% LAEC OFF
+                          </span>
+                        )}
+                      </div>
                       <input
                         type="text"
                         required
                         value={leaderUsn}
                         onChange={(e) => setLeaderUsn(e.target.value.toUpperCase())}
-                        placeholder="e.g., 3LA22CS045"
-                        className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
+                        placeholder="Enter USN / Student ID"
+                        className={`w-full px-3 py-2 rounded-xl bg-slate-900 border text-white text-xs font-mono focus:outline-none ${
+                          isHackathon && isLeaderLaec
+                            ? 'border-emerald-500/60 focus:border-emerald-400'
+                            : 'border-slate-700 focus:border-cyan-400'
+                        }`}
                       />
                     </div>
 
@@ -732,7 +766,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                                 updated[idx] = { ...updated[idx], usn: e.target.value.toUpperCase() };
                                 setMembers(updated);
                               }}
-                              placeholder="e.g., 3LA22CS012"
+                              placeholder="Enter USN / Student ID"
                               className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
                             />
                           </div>
@@ -763,12 +797,29 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
                   <div>
                     <span className="text-xs font-mono text-slate-400 block">Registration Fee Due:</span>
-                    <span className="text-2xl font-black font-mono text-cyan-400">
-                      {currentEvent.feeDisplay}
-                    </span>
-                    <span className="text-[11px] font-mono text-slate-400 ml-2">
-                      ({currentEvent.name})
-                    </span>
+                    <div className="flex items-baseline gap-2">
+                      {isLaecDiscountEligible ? (
+                        <>
+                          <span className="text-sm font-mono text-slate-500 line-through">
+                            ₹1,200
+                          </span>
+                          <span className="text-2xl font-black font-mono text-emerald-400">
+                            ₹1,080
+                          </span>
+                          <span className="text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 text-emerald-400" />
+                            10% LAEC DISCOUNT
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-2xl font-black font-mono text-cyan-400">
+                          {currentEvent.feeDisplay}
+                        </span>
+                      )}
+                      <span className="text-[11px] font-mono text-slate-400 ml-1">
+                        ({currentEvent.name})
+                      </span>
+                    </div>
                   </div>
 
                   <button
@@ -787,7 +838,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
             {/* ---------------------------------------------------- */}
             {step === 'payment' && (
               <PaymentCard
-                event={currentEvent}
+                event={paymentEvent}
                 teamName={teamName}
                 collegeName={collegeName}
                 leaderName={leaderName}
@@ -849,7 +900,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         Verification Pending
                       </span>
                       <div className="text-[10px] text-slate-400 mt-1">
-                        Fee: ₹{receiptRecord.amount} (Paid via UPI)
+                        Fee: ₹{receiptRecord.amount} {Number(receiptRecord.amount) === 1080 ? '(10% LAEC Discounted)' : ''} (Paid via UPI)
                       </div>
                     </div>
                   </div>
