@@ -162,7 +162,6 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
   const [receiptRecord, setReceiptRecord] = useState<PaymentRecord | null>(null);
   const [copiedToken, setCopiedToken] = useState(false);
   const [copiedGroupLink, setCopiedGroupLink] = useState(false);
-  const [isAutoRedirectingWa, setIsAutoRedirectingWa] = useState(false);
   const [storedRecords, setStoredRecords] = useState<PaymentRecord[]>([]);
 
   // Keep team size in valid bounds when event changes
@@ -244,30 +243,6 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
     setReceiptRecord(record);
     setStep('receipt');
     triggerConfetti();
-    setIsAutoRedirectingWa(true);
-
-    const waUrl = getSecretariatWhatsAppUrl(record);
-
-    // Automatically take the user to WhatsApp with the provided secretariat number and details
-    setTimeout(() => {
-      try {
-        const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        );
-        if (isMobile) {
-          window.location.href = waUrl;
-        } else {
-          const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
-          if (!win || win.closed || typeof win.closed === 'undefined') {
-            window.location.href = waUrl;
-          }
-        }
-      } catch {
-        window.location.href = waUrl;
-      } finally {
-        setTimeout(() => setIsAutoRedirectingWa(false), 4000);
-      }
-    }, 700);
   };
 
   const handleDetailsSubmit = (e: React.FormEvent) => {
@@ -1134,21 +1109,6 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     <span>Issued: {new Date(receiptRecord.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
-
-                {/* Auto-redirecting notice */}
-                {isAutoRedirectingWa && (
-                  <div className="p-3 sm:p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-between text-xs font-mono text-emerald-300 animate-pulse">
-                    <div className="flex items-center gap-2">
-                      <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                      <span className="font-semibold">
-                        Opening WhatsApp to send registration details to Secretariat (+91 8296612843)...
-                      </span>
-                    </div>
-                    <span className="text-[10px] uppercase font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded shrink-0">
-                      Redirecting
-                    </span>
-                  </div>
-                )}
 
                 {/* 1. Official WhatsApp Group Community Invite Card */}
                 <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-950/90 via-slate-900 to-slate-950 border-2 border-emerald-500/60 shadow-xl space-y-3 font-mono">
