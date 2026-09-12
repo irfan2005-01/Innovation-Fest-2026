@@ -53,6 +53,7 @@ export interface PaymentSubmission {
   eventType: 'hackora' | 'ideathon' | 'expo' | 'project_expo';
   eventName: string;
   amount: number;
+  paymentMethod?: 'upi' | 'cash';
   utrNumber: string;
   payerName: string;
   payerUpiId: string;
@@ -77,6 +78,30 @@ export interface PaymentSubmission {
   foodPreference?: 'veg' | 'non-veg';
 }
 
+export interface ManualRegistrationSubmission {
+  teamName: string;
+  leaderName: string;
+  leaderEmail: string;
+  leaderPhone: string;
+  collegeName: string;
+  studentId?: string;
+  branch?: string;
+  year?: string;
+  eventType: 'hackora' | 'ideathon' | 'expo' | 'project_expo';
+  eventName: string;
+  amount: number;
+  paymentMethod: 'upi' | 'cash';
+  utrNumber?: string;
+  payerName?: string;
+  payerUpiId?: string;
+  paymentScreenshotUrl?: string;
+  payment_screenshot_url?: string;
+  themeId?: string;
+  projectTitle?: string;
+  members?: TeamMemberDetail[];
+  status?: 'pending' | 'verified' | 'rejected';
+}
+
 export interface PaymentRecord {
   id: string;
   registrationToken: string;
@@ -91,6 +116,7 @@ export interface PaymentRecord {
   eventType: string;
   eventName: string;
   amount: number;
+  paymentMethod?: 'upi' | 'cash' | string;
   utrNumber: string;
   payerName: string;
   payerUpiId: string;
@@ -413,6 +439,195 @@ export async function submitPaymentAndRegistration(
 }
 
 /**
+ * Submit manual team registration from Admin Panel:
+ * - If Cash: No screenshot required, status defaults to 'verified', UTR/receipt reference optional.
+ * - If Online: 12-digit UTR and payment screenshot are strictly validated.
+ */
+export async function submitManualRegistration(
+  data: ManualRegistrationSubmission
+): Promise<{ success: boolean; record?: PaymentRecord; error?: string }> {
+  const isCash = data.paymentMethod === 'cash';
+  const cleanLeaderName = (data.leaderName || '').trim();
+  const cleanTeamName = (data.teamName || `${cleanLeaderName || 'Fest'}'s Team`).trim();
+  const cleanCollege = (data.collegeName || 'Lingaraj Appa Engineering College').trim();
+  const cleanPhone = (data.leaderPhone || '').trim();
+  const cleanEmail = (data.leaderEmail || '').trim().toLowerCase();
+  const eventType = data.eventType === 'expo' ? 'project_expo' : data.eventType;
+  const status = data.status || 'verified';
+
+  if (!cleanTeamName) {
+    return { success: false, error: 'Team name is required.' };
+  }
+  if (!cleanLeaderName) {
+    return { success: false, error: 'Team leader name is required.' };
+  }
+  if (!cleanPhone || cleanPhone.replace(/\D/g, '').length < 10) {
+    return { success: false, error: 'A valid 10-digit phone number is required.' };
+  }
+
+  let cleanUtr = (data.utrNumber || '').trim();
+  let screenshotUrl = (data.paymentScreenshotUrl || data.payment_screenshot_url || '').trim();
+  let cleanPayerName = (data.payerName || cleanLeaderName).trim();
+  let cleanPayerUpiId = (data.payerUpiId || '').trim();
+
+  if (isCash) {
+    if (!cleanUtr) {
+      cleanUtr = `CASH-${Date.now().toString().slice(-6)}`;
+    }
+    if (!cleanPayerUpiId) {
+      cleanPayerUpiId = 'cash@desk';
+    }
+    // For cash: screenshot is optional / omitted
+  } else {
+    // Online UPI validation
+    if (!/^[0-9]{12}$/.test(cleanUtr)) {
+      return {
+        success: false,
+        error: 'Invalid UTR: Online UPI requires an exact 12-digit numeric UTR number.',
+      };
+    }
+    if (!screenshotUrl) {
+      return {
+        success: false,
+        error: 'Payment verification screenshot is required for online payments.',
+      };
+    }
+  }
+
+  const registrationToken = `LAEC-IF26-${(eventType || 'HACK').toUpperCase().slice(0, 4)}-${Math.floor(
+    1000 + Math.random() * 9000
+  )}`;
+  const now = new Date().toISOString();
+
+  const localRecord: PaymentRecord = {
+    id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `pay-${Date.now()}`,
+    registrationToken,
+    teamName: cleanTeamName,
+    leaderName: cleanLeaderName,
+    leaderEmail: cleanEmail || `${cleanPhone}@participant.laec.edu.in`,
+    leaderPhone: cleanPhone,
+    collegeName: cleanCollege,
+    studentId: data.studentId,
+    branch: data.branch,
+    year: data.year,
+    eventType,
+    eventName: data.eventName,
+    amount: data.amount,
+    paymentMethod: isCash ? 'cash' : 'upi',
+    utrNumber: cleanUtr,
+    payerName: cleanPayerName,
+    payerUpiId: cleanPayerUpiId,
+    paymentScreenshotUrl: screenshotUrl,
+    payment_screenshot_url: screenshotUrl,
+    themeId: data.themeId,
+    projectTitle: data.projectTitle,
+    members: data.members,
+    status,
+    created_at: now,
+    source: 'local_fallback',
+  };
+
+  // Always cache locally so it appears immediately on desk
+  try {
+    const existing = JSON.parse(localStorage.getItem('laec_fest_payments') || '[]');
+    existing.unshift(localRecord);
+    localStorage.setItem('laec_fest_payments', JSON.stringify(existing));
+  } catch (storageErr) {
+    console.warn('LocalStorage save notice:', storageErr);
+  }
+
+  // 1. Try admin serverless route (/api/admin/manual-registration)
+  try {
+    const response = await fetch('/api/admin/manual-registration', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...data,
+        registrationToken,
+        utrNumber: cleanUtr,
+        paymentScreenshotUrl: screenshotUrl,
+        paymentMethod: isCash ? 'cash' : 'upi',
+        status,
+      }),
+    });
+    if (response.ok) {
+      const result = await response.json().catch(() => ({}));
+      if (result.success) {
+        const serverRecord: PaymentRecord = {
+          ...localRecord,
+          id: result.id || localRecord.id,
+          registrationToken: result.registrationToken || localRecord.registrationToken,
+          source: 'supabase',
+        };
+        try {
+          const existing = JSON.parse(localStorage.getItem('laec_fest_payments') || '[]');
+          existing[0] = serverRecord;
+          localStorage.setItem('laec_fest_payments', JSON.stringify(existing));
+        } catch {}
+        return { success: true, record: serverRecord };
+      }
+    }
+  } catch (apiErr) {
+    console.warn('Manual registration API unreachable, using direct client DB fallback:', apiErr);
+  }
+
+  // 2. Direct client-side Supabase write fallback
+  if (isSupabaseConfigured) {
+    try {
+      const { data: payData, error: payError } = await supabase
+        .from('payments')
+        .insert({
+          registration_token: registrationToken,
+          event_type: eventType,
+          event_name: data.eventName,
+          amount: data.amount,
+          payment_method: isCash ? 'cash' : 'upi',
+          utr_number: cleanUtr,
+          payer_name: cleanPayerName,
+          payer_upi_id: cleanPayerUpiId,
+          payment_screenshot_url: screenshotUrl,
+          status,
+          team_name: cleanTeamName,
+          college_name: cleanCollege,
+          leader_name: cleanLeaderName,
+          leader_email: cleanEmail,
+          leader_phone: cleanPhone,
+          student_id: data.studentId || '',
+          branch: data.branch || '',
+          year: data.year || '',
+          theme_id: data.themeId || '',
+          project_title: data.projectTitle || '',
+          members: data.members || [],
+          team_id: '3c3fb2a8-b358-4d08-b175-37a7eace0055',
+          user_id: '24e22701-66f2-4637-9c40-ce40de7cd94a',
+        })
+        .select()
+        .single();
+
+      if (!payError && payData?.id) {
+        const cloudRecord: PaymentRecord = {
+          ...localRecord,
+          id: payData.id,
+          source: 'supabase',
+        };
+        try {
+          const existing = JSON.parse(localStorage.getItem('laec_fest_payments') || '[]');
+          existing[0] = cloudRecord;
+          localStorage.setItem('laec_fest_payments', JSON.stringify(existing));
+        } catch {}
+        return { success: true, record: cloudRecord };
+      } else if (payError) {
+        console.warn('Direct Supabase insert notice:', payError.message);
+      }
+    } catch (clientDbErr: any) {
+      console.warn('Client Supabase insertion error:', clientDbErr?.message);
+    }
+  }
+
+  return { success: true, record: localRecord };
+}
+
+/**
  * Fetch cached registration receipts from LocalStorage
  */
 export function getStoredPayments(): PaymentRecord[] {
@@ -490,6 +705,7 @@ export async function fetchAllPayments(): Promise<{
             eventType: row.event_type || 'hackora',
             eventName: row.event_name || 'Hackora 2026',
             amount: Number(row.amount) || 1200,
+            paymentMethod: row.payment_method || (String(row.utr_number || '').startsWith('CASH') ? 'cash' : 'upi'),
             utrNumber: row.utr_number || '—',
             payerName: row.payer_name || 'Participant',
             payerUpiId: row.payer_upi_id || '—',
@@ -536,6 +752,7 @@ export async function fetchAllPayments(): Promise<{
             eventType: row.event_type || 'hackora',
             eventName: row.event_name || 'Hackora 2026',
             amount: Number(row.amount) || 1200,
+            paymentMethod: row.payment_method || (String(row.utr_number || '').startsWith('CASH') ? 'cash' : 'upi'),
             utrNumber: row.utr_number || '—',
             payerName: row.payer_name || 'Participant',
             payerUpiId: row.payer_upi_id || '—',

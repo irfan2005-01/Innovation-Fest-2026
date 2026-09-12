@@ -23,6 +23,7 @@ import {
   ExternalLink,
   UploadCloud,
   Upload,
+  UserPlus,
 } from 'lucide-react';
 import {
   fetchAllPayments,
@@ -36,6 +37,7 @@ import {
 } from '../lib/supabase';
 import { PageId } from '../types';
 import { RotatingO } from '../components/HackoraLogo';
+import { ManualRegistrationModal } from '../components/admin/ManualRegistrationModal';
 
 interface AdminPageProps {
   onNavigate: (page: PageId) => void;
@@ -62,6 +64,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
   const [selectedRecord, setSelectedRecord] = useState<PaymentRecord | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [showSqlModal, setShowSqlModal] = useState(false);
+  const [showManualEntryModal, setShowManualEntryModal] = useState(false);
   const [copiedSql, setCopiedSql] = useState(false);
   const [actionSuccessMessage, setActionSuccessMessage] = useState<string | null>(null);
 
@@ -430,6 +433,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
           >
             <Upload className={`w-4 h-4 ${isImporting ? 'animate-bounce' : ''}`} />
             <span>{isImporting ? 'Importing...' : 'Import CSV'}</span>
+          </button>
+
+          <button
+            onClick={() => setShowManualEntryModal(true)}
+            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:opacity-95 text-slate-950 font-mono text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-cyan-500/25 transition-all"
+            title="Manually register a team at Secretariat desk"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span>+ Manual Team Entry</span>
           </button>
 
           <button
@@ -812,7 +824,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
 
                       {/* Fee, UTR & Payer Info */}
                       <td className="py-3.5 px-4">
-                        <div className="font-bold text-white">₹{r.amount}</div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-white">₹{r.amount}</span>
+                          {r.paymentMethod === 'cash' || r.utrNumber?.startsWith('CASH') ? (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                              CASH
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                              UPI
+                            </span>
+                          )}
+                        </div>
                         <div className="text-[11px] font-mono text-emerald-400 tracking-wider">
                           {r.utrNumber}
                         </div>
@@ -831,9 +854,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                         )}
                       </td>
 
-                      {/* Screenshot Proof Thumbnail */}
+                      {/* Screenshot Proof Thumbnail / Cash Indicator */}
                       <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
-                        {r.paymentScreenshotUrl && !imageErrors[r.id] ? (
+                        {r.paymentMethod === 'cash' || r.utrNumber?.startsWith('CASH') ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-bold font-mono">
+                            <CheckCircle2 className="w-3 h-3 text-amber-400" />
+                            <span>Cash Desk</span>
+                          </span>
+                        ) : r.paymentScreenshotUrl && !imageErrors[r.id] ? (
                           <button
                             type="button"
                             onClick={() => setPreviewImage(r.paymentScreenshotUrl || null)}
@@ -985,10 +1013,25 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 col-span-2">
-                  <span className="text-[10px] text-slate-500 block uppercase">12-Digit UTR</span>
-                  <span className="font-bold text-emerald-400 text-sm tracking-wider">
-                    {selectedRecord.utrNumber}
+                  <span className="text-[10px] text-slate-500 block uppercase">
+                    {selectedRecord.paymentMethod === 'cash' || selectedRecord.utrNumber?.startsWith('CASH')
+                      ? 'Payment Method & Receipt Reference'
+                      : '12-Digit UTR Number'}
                   </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="font-bold text-emerald-400 text-sm tracking-wider font-mono">
+                      {selectedRecord.utrNumber}
+                    </span>
+                    {selectedRecord.paymentMethod === 'cash' || selectedRecord.utrNumber?.startsWith('CASH') ? (
+                      <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold">
+                        CASH AT DESK
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-bold">
+                        ONLINE UPI
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
@@ -1028,8 +1071,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                   </div>
                 )}
 
-                {/* Payment Screenshot Proof Card */}
-                {selectedRecord.paymentScreenshotUrl && !imageErrors[selectedRecord.id] ? (
+                {/* Payment Screenshot Proof Card / Cash Notice */}
+                {selectedRecord.paymentMethod === 'cash' || selectedRecord.utrNumber?.startsWith('CASH') ? (
+                  <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 col-span-2 space-y-1.5">
+                    <div className="flex items-center gap-2 text-amber-300 font-bold text-xs font-mono">
+                      <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                      <span>Cash Payment Verified at Desk</span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 font-mono">
+                      Payment collected in cash directly at Secretariat registration desk. No digital screenshot required.
+                    </p>
+                  </div>
+                ) : selectedRecord.paymentScreenshotUrl && !imageErrors[selectedRecord.id] ? (
                   <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 col-span-2 space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] text-slate-400 block uppercase font-mono font-bold flex items-center gap-1.5">
@@ -1265,6 +1318,22 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
           </div>
         )}
       </AnimatePresence>
+
+      {/* ---------------------------------------------------- */}
+      {/* MANUAL REGISTRATION MODAL (SECRETARIAT DESK) */}
+      {/* ---------------------------------------------------- */}
+      <ManualRegistrationModal
+        isOpen={showManualEntryModal}
+        onClose={() => setShowManualEntryModal(false)}
+        onSuccess={(newRecord) => {
+          setRecords((prev) => [newRecord, ...prev]);
+          setActionSuccessMessage(
+            `Successfully registered "${newRecord.teamName}"! Official Token: ${newRecord.registrationToken}`
+          );
+          setTimeout(() => setActionSuccessMessage(null), 6000);
+          loadData();
+        }}
+      />
     </div>
   );
 };

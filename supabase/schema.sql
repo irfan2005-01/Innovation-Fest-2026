@@ -48,11 +48,11 @@ CREATE TABLE IF NOT EXISTS public.payments (
   amount NUMERIC NOT NULL CHECK (amount > 0),
   payment_method TEXT NOT NULL DEFAULT 'upi',
   
-  -- Mandatory UPI & Fraud-Check Details (Strictly Enforced)
-  utr_number TEXT NOT NULL CHECK (utr_number ~ '^[0-9]{12}$'),
-  payer_name TEXT NOT NULL,
-  payer_upi_id TEXT NOT NULL,
-  payment_screenshot_url TEXT NOT NULL,
+  -- Payment Details (UTR for Online UPI, or receipt reference for Cash)
+  utr_number TEXT,
+  payer_name TEXT,
+  payer_upi_id TEXT,
+  payment_screenshot_url TEXT,
   
   -- Verification Workflow
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'verified', 'rejected')),

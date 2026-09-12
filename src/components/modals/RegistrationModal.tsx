@@ -19,6 +19,7 @@ import {
   Users,
   GraduationCap,
   Sparkles,
+  ExternalLink,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import {
@@ -160,6 +161,8 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [receiptRecord, setReceiptRecord] = useState<PaymentRecord | null>(null);
   const [copiedToken, setCopiedToken] = useState(false);
+  const [copiedGroupLink, setCopiedGroupLink] = useState(false);
+  const [isAutoRedirectingWa, setIsAutoRedirectingWa] = useState(false);
   const [storedRecords, setStoredRecords] = useState<PaymentRecord[]>([]);
 
   // Keep team size in valid bounds when event changes
@@ -207,6 +210,64 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
     navigator.clipboard.writeText(token);
     setCopiedToken(true);
     setTimeout(() => setCopiedToken(false), 2000);
+  };
+
+  const handleCopyGroupLink = (link: string) => {
+    navigator.clipboard.writeText(link);
+    setCopiedGroupLink(true);
+    setTimeout(() => setCopiedGroupLink(false), 2000);
+  };
+
+  const getSecretariatWhatsAppUrl = (rec: PaymentRecord) => {
+    const membersText =
+      rec.members && rec.members.length > 0
+        ? `\n*Team Members:*\n` +
+          rec.members.map((m, idx) => `${idx + 2}. ${m.name} (${m.usn || '—'})`).join('\n')
+        : '';
+
+    const text =
+      `Hello LAEC Secretariat! We have registered for INNOVATION FEST 2026.\n\n` +
+      `*Registration Token:* ${rec.registrationToken}\n` +
+      `*Event:* ${rec.eventName}\n` +
+      `*Team Name:* ${rec.teamName}\n` +
+      `*College:* ${rec.collegeName}\n` +
+      `*Leader:* ${rec.leaderName} (USN: ${rec.studentId || '—'}, Phone: ${rec.leaderPhone})\n` +
+      `*Amount:* Rs.${rec.amount}\n` +
+      `*UTR Number:* ${rec.utrNumber}` +
+      membersText +
+      `\n\nPlease verify our registration pass. Thank you!`;
+
+    return `https://wa.me/918296612843?text=${encodeURIComponent(text)}`;
+  };
+
+  const handlePaymentSuccess = (record: PaymentRecord) => {
+    setReceiptRecord(record);
+    setStep('receipt');
+    triggerConfetti();
+    setIsAutoRedirectingWa(true);
+
+    const waUrl = getSecretariatWhatsAppUrl(record);
+
+    // Automatically take the user to WhatsApp with the provided secretariat number and details
+    setTimeout(() => {
+      try {
+        const isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+        if (isMobile) {
+          window.location.href = waUrl;
+        } else {
+          const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
+          if (!win || win.closed || typeof win.closed === 'undefined') {
+            window.location.href = waUrl;
+          }
+        }
+      } catch {
+        window.location.href = waUrl;
+      } finally {
+        setTimeout(() => setIsAutoRedirectingWa(false), 4000);
+      }
+    }, 700);
   };
 
   const handleDetailsSubmit = (e: React.FormEvent) => {
@@ -286,25 +347,42 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
 
   const currentEvent = EVENTS[selectedEvent];
 
-  // 10% Discount for LAEC College Students on Hackathon only:
-  // Identified when USN contains "LA" (case-insensitive, e.g. 3LA23CS106)
-  const isLeaderLaec = (leaderUsn || '').toUpperCase().includes('LA');
-  const isMemberLaec = members
-    .slice(0, Math.max(0, teamSize - 1))
-    .some((m) => (m.usn || '').toUpperCase().includes('LA'));
-  const isLaecStudent = isLeaderLaec || isMemberLaec;
-  const isHackathon = selectedEvent === 'hackora';
-  const isLaecDiscountEligible = isHackathon && isLaecStudent;
+  // 10% Discount for LAEC & Associated/Sister Institution Students (e.g., USNs containing "LA" like 3LA23CS106 or "U27XK" like U27XK25S0005) on Hackathon only:
+  const isUsnEligible = (usnVal: string | undefined | null): boolean => {
+    if (!usnVal) return false;
+    const clean = usnVal.toUpperCase().trim();
+    return clean.includes('LA') || clean.includes('U27XK') || clean.startsWith('U27');
+  };
 
-  const calculatedFeeNumber = isLaecDiscountEligible ? 1080 : currentEvent.feeNumber;
-  const calculatedFeeDisplay = isLaecDiscountEligible ? '₹1,080' : currentEvent.feeDisplay;
+  const isCollegeEligible = (collegeVal: string | undefined | null): boolean => {
+    if (!collegeVal) return false;
+    const clean = collegeVal.toLowerCase().trim();
+    return (
+      clean.includes('laec') ||
+      clean.includes('lingaraj') ||
+      clean.includes('channabasamma') ||
+      clean.includes('cb bca') ||
+      clean.includes('cb bcom')
+    );
+  };
+
+  const isLeaderDiscountEligible = isUsnEligible(leaderUsn) || isCollegeEligible(collegeName);
+  const isMemberDiscountEligible = members
+    .slice(0, Math.max(0, teamSize - 1))
+    .some((m) => isUsnEligible(m.usn));
+  const isCampusStudent = isLeaderDiscountEligible || isMemberDiscountEligible;
+  const isHackathon = selectedEvent === 'hackora';
+  const isDiscountEligible = isHackathon && isCampusStudent;
+
+  const calculatedFeeNumber = isDiscountEligible ? 1080 : currentEvent.feeNumber;
+  const calculatedFeeDisplay = isDiscountEligible ? '₹1,080' : currentEvent.feeDisplay;
 
   const paymentEvent = {
     ...currentEvent,
     feeNumber: calculatedFeeNumber,
     feeDisplay: calculatedFeeDisplay,
-    isDiscountApplied: isLaecDiscountEligible,
-    originalFeeDisplay: isLaecDiscountEligible ? '₹1,200' : undefined,
+    isDiscountApplied: isDiscountEligible,
+    originalFeeDisplay: isDiscountEligible ? '₹1,200' : undefined,
   };
 
   return (
@@ -683,10 +761,10 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         <label className="block text-[11px] font-mono text-slate-300">
                           USN / Student ID *
                         </label>
-                        {isHackathon && isLeaderLaec && (
+                        {isHackathon && isLeaderDiscountEligible && (
                           <span className="text-[9px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/30 inline-flex items-center gap-1">
                             <Sparkles className="w-2.5 h-2.5 text-emerald-400" />
-                            10% LAEC OFF
+                            10% OFF
                           </span>
                         )}
                       </div>
@@ -697,7 +775,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         onChange={(e) => setLeaderUsn(e.target.value.toUpperCase())}
                         placeholder="Enter USN / Student ID"
                         className={`w-full px-3 py-2 rounded-xl bg-slate-900 border text-white text-xs font-mono focus:outline-none ${
-                          isHackathon && isLeaderLaec
+                          isHackathon && isLeaderDiscountEligible
                             ? 'border-emerald-500/60 focus:border-emerald-400'
                             : 'border-slate-700 focus:border-cyan-400'
                         }`}
@@ -773,9 +851,17 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                           </div>
 
                           <div>
-                            <label className="block text-[10px] font-mono text-slate-300 mb-0.5">
-                              USN / Student ID *
-                            </label>
+                            <div className="flex items-center justify-between mb-0.5">
+                              <label className="block text-[10px] font-mono text-slate-300">
+                                USN / Student ID *
+                              </label>
+                              {isHackathon && isUsnEligible(members[idx]?.usn) && (
+                                <span className="text-[8.5px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/30 inline-flex items-center gap-0.5">
+                                  <Sparkles className="w-2 h-2 text-emerald-400" />
+                                  10% OFF
+                                </span>
+                              )}
+                            </div>
                             <input
                               type="text"
                               required
@@ -786,7 +872,11 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                                 setMembers(updated);
                               }}
                               placeholder="Enter USN / Student ID"
-                              className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono focus:border-cyan-400 focus:outline-none"
+                              className={`w-full px-3 py-2 rounded-xl bg-slate-950 border text-white text-xs font-mono focus:outline-none ${
+                                isHackathon && isUsnEligible(members[idx]?.usn)
+                                  ? 'border-emerald-500/60 focus:border-emerald-400'
+                                  : 'border-slate-700 focus:border-cyan-400'
+                              }`}
                             />
                           </div>
 
@@ -817,7 +907,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                   <div>
                     <span className="text-[11px] sm:text-xs font-mono text-slate-400 block">Registration Fee Due:</span>
                     <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 mt-0.5">
-                      {isLaecDiscountEligible ? (
+                      {isDiscountEligible ? (
                         <>
                           <span className="text-xs sm:text-sm font-mono text-slate-500 line-through">
                             ₹1,200
@@ -827,7 +917,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                           </span>
                           <span className="text-[9px] sm:text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
                             <Sparkles className="w-3 h-3 text-emerald-400" />
-                            10% LAEC DISCOUNT
+                            10% COLLEGE DISCOUNT
                           </span>
                         </>
                       ) : (
@@ -876,9 +966,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                 }
                 members={members.slice(0, Math.max(0, teamSize - 1)).filter((m) => m.name.trim())}
                 onSuccess={(record) => {
-                  setReceiptRecord(record);
-                  setStep('receipt');
-                  triggerConfetti();
+                  handlePaymentSuccess(record);
                 }}
                 onBack={() => setStep('details')}
               />
@@ -919,7 +1007,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         Verification Pending
                       </span>
                       <div className="text-[10px] text-slate-400 mt-1">
-                        Fee: ₹{receiptRecord.amount} {Number(receiptRecord.amount) === 1080 ? '(10% LAEC Discounted)' : ''} (Paid via UPI)
+                        Fee: ₹{receiptRecord.amount} {Number(receiptRecord.amount) === 1080 ? '(10% College Discounted)' : ''} (Paid via UPI)
                       </div>
                     </div>
                   </div>
@@ -1047,25 +1135,110 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                   </div>
                 </div>
 
-                {/* WhatsApp Secretariat Confirmation Action */}
-                <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-300 font-bold">
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Instant Secretariat WhatsApp Verification</span>
+                {/* Auto-redirecting notice */}
+                {isAutoRedirectingWa && (
+                  <div className="p-3 sm:p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-between text-xs font-mono text-emerald-300 animate-pulse">
+                    <div className="flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span className="font-semibold">
+                        Opening WhatsApp to send registration details to Secretariat (+91 8296612843)...
+                      </span>
+                    </div>
+                    <span className="text-[10px] uppercase font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded shrink-0">
+                      Redirecting
+                    </span>
                   </div>
-                  <p className="text-slate-300 text-[11px] leading-relaxed">
-                    To expedite immediate check-in and confirmation, send your pass token & UTR to the organizing committee desk on WhatsApp.
+                )}
+
+                {/* 1. Official WhatsApp Group Community Invite Card */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-950/90 via-slate-900 to-slate-950 border-2 border-emerald-500/60 shadow-xl space-y-3 font-mono">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2.5 text-emerald-300 font-bold text-xs sm:text-sm">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                        <Users className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="uppercase tracking-wider flex items-center gap-2 flex-wrap">
+                          <span>Official WhatsApp Community</span>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black animate-pulse border border-emerald-500/40">
+                            STEP 2: JOIN GROUP
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-sans font-normal">
+                          For all registered teams & builders
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                    All participants must join the official <strong>Innovation Fest 2026 WhatsApp Group</strong> for schedule announcements, problem statement releases, evaluation slots, and live event updates.
                   </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+                    <a
+                      href="https://chat.whatsapp.com/KHE6DJo1fu0IrNtfjuLO50"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="sm:col-span-2 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-slate-950 font-black font-mono text-xs sm:text-sm transition-all shadow-lg shadow-emerald-500/25 group"
+                    >
+                      <MessageCircle className="w-4 h-4 text-slate-950 fill-slate-950" />
+                      <span>Join Official WhatsApp Group</span>
+                      <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                    </a>
+
+                    <button
+                      type="button"
+                      onClick={() => handleCopyGroupLink('https://chat.whatsapp.com/KHE6DJo1fu0IrNtfjuLO50')}
+                      className="inline-flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold font-mono text-xs transition-colors"
+                      title="Share link with teammates"
+                    >
+                      {copiedGroupLink ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400">Link Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Copy Group Link</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="text-[10px] text-slate-400 text-center truncate">
+                    Group Link: <span className="text-emerald-400 font-mono select-all">https://chat.whatsapp.com/KHE6DJo1fu0IrNtfjuLO50</span>
+                  </div>
+                </div>
+
+                {/* 2. Secretariat WhatsApp Verification Details Card */}
+                <div className="p-4 rounded-2xl bg-slate-900/90 border border-cyan-500/30 text-xs font-mono space-y-2.5">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2 text-cyan-300 font-bold">
+                      <div className="w-7 h-7 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0">
+                        <MessageCircle className="w-4 h-4" />
+                      </div>
+                      <span>Secretariat Pass Verification Desk</span>
+                    </div>
+                    <span className="text-[10px] bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-bold">
+                      +91 8296612843
+                    </span>
+                  </div>
+
+                  <p className="text-slate-300 text-[11px] leading-relaxed font-sans">
+                    Your pass token & UTR details are automatically prepared for the organizing committee on WhatsApp. If WhatsApp did not open automatically, tap below:
+                  </p>
+
                   <a
-                    href={`https://wa.me/918296612843?text=${encodeURIComponent(
-                      `Hello LAEC Secretariat! We have registered for INNOVATION FEST 2026.\n\n*Registration Token:* ${receiptRecord.registrationToken}\n*Event:* ${receiptRecord.eventName}\n*Team Name:* ${receiptRecord.teamName}\n*College:* ${receiptRecord.collegeName}\n*Leader:* ${receiptRecord.leaderName} (USN: ${receiptRecord.studentId}, Phone: ${receiptRecord.leaderPhone})\n*Amount:* Rs.${receiptRecord.amount}\n*UTR Number:* ${receiptRecord.utrNumber}\n\nPlease verify our registration pass. Thank you!`
-                    )}`}
+                    href={getSecretariatWhatsAppUrl(receiptRecord)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-xs transition-colors shadow-lg shadow-emerald-500/20"
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 hover:text-cyan-200 border border-cyan-500/40 font-bold font-mono text-xs transition-colors shadow-md active:scale-[0.98]"
                   >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Send Verification WhatsApp to Secretariat (+91 8296612843)</span>
+                    <MessageCircle className="w-4 h-4 text-cyan-400" />
+                    <span>Send Verification Message on WhatsApp (+91 8296612843)</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
 
@@ -1118,7 +1291,25 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     </button>
                   </div>
                 ) : (
-                  storedRecords.map((rec) => (
+                  <>
+                    {/* Official WhatsApp Group Quick Banner */}
+                    <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-slate-950 border border-emerald-500/40 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+                      <div className="flex items-center gap-2 text-emerald-300 font-bold">
+                        <Users className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>Official Participants WhatsApp Group:</span>
+                      </div>
+                      <a
+                        href="https://chat.whatsapp.com/KHE6DJo1fu0IrNtfjuLO50"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs inline-flex items-center gap-1.5 shadow-md shadow-emerald-500/20"
+                      >
+                        <span>Join Group</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+
+                    {storedRecords.map((rec) => (
                     <div
                       key={rec.id || rec.registrationToken}
                       className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2 text-xs font-mono hover:border-cyan-500/40 transition-colors"
@@ -1160,7 +1351,8 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         </a>
                       </div>
                     </div>
-                  ))
+                  ))}
+                  </>
                 )}
               </div>
             )}

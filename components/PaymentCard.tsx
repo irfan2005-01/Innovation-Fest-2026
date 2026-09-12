@@ -361,7 +361,7 @@ export const PaymentCard: React.FC<PaymentCardProps> = ({
                 }`}
               >
                 {event.isDiscountApplied && <Sparkles className="w-3.5 h-3.5 text-emerald-400" />}
-                <span>Fee: {event.feeDisplay} {event.isDiscountApplied ? '(10% LAEC Discount)' : ''}</span>
+                <span>Fee: {event.feeDisplay} {event.isDiscountApplied ? '(10% College Discount)' : ''}</span>
               </span>
             </div>
           </div>
