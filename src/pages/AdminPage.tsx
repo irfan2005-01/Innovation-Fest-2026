@@ -542,7 +542,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
             {hackoraCount} <span className="text-xs font-normal text-slate-400">teams</span>
           </div>
           <div className="text-[11px] font-mono text-slate-400">
-            ₹{(hackoraCount * 1200).toLocaleString()}
+            ₹{records
+              .filter((r) => r.eventType === 'hackora')
+              .reduce((sum, r) => sum + (Number(r.amount) || 0), 0)
+              .toLocaleString()}
           </div>
         </button>
 
@@ -568,7 +571,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
             {ideathonCount} <span className="text-xs font-normal text-slate-400">teams</span>
           </div>
           <div className="text-[11px] font-mono text-slate-400">
-            ₹{(ideathonCount * 250).toLocaleString()}
+            ₹{records
+              .filter((r) => r.eventType === 'ideathon')
+              .reduce((sum, r) => sum + (Number(r.amount) || 0), 0)
+              .toLocaleString()}
           </div>
         </button>
 
@@ -594,7 +600,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
             {expoCount} <span className="text-xs font-normal text-slate-400">teams</span>
           </div>
           <div className="text-[11px] font-mono text-slate-400">
-            ₹{(expoCount * 250).toLocaleString()}
+            ₹{records
+              .filter((r) => r.eventType === 'project_expo' || (r.eventType as string) === 'expo')
+              .reduce((sum, r) => sum + (Number(r.amount) || 0), 0)
+              .toLocaleString()}
           </div>
         </button>
       </div>
