@@ -24,10 +24,13 @@ import {
   UploadCloud,
   Upload,
   UserPlus,
+  MapPin,
+  MapPinCheck,
 } from 'lucide-react';
 import {
   fetchAllPayments,
   updatePaymentStatus,
+  updatePaymentArrival,
   deletePaymentRecord,
   exportPaymentsToCSV,
   importPaymentsFromCSV,
@@ -58,10 +61,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEvent, setSelectedEvent] = useState<'all' | 'hackora' | 'ideathon' | 'project_expo'>('all');
-  const [selectedStatus, setSelectedStatus] = useState<'all' | 'pending' | 'verified' | 'rejected'>('all');
+  const [selectedStatus, setSelectedStatus] = useState<
+    'all' | 'pending' | 'verified' | 'rejected' | 'arrived' | 'not_arrived'
+  >('all');
 
   // Modals & Drawers
   const [selectedRecord, setSelectedRecord] = useState<PaymentRecord | null>(null);
+  const [arrivedWarningRecord, setArrivedWarningRecord] = useState<PaymentRecord | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [showSqlModal, setShowSqlModal] = useState(false);
   const [showManualEntryModal, setShowManualEntryModal] = useState(false);
@@ -192,6 +198,35 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
     setTimeout(() => setActionSuccessMessage(null), 3000);
   };
 
+  const handleToggleArrived = async (id: string, newArrived: boolean) => {
+    const record = records.find((r) => r.id === id);
+    if (newArrived && record?.arrived) {
+      // If already arrived, popup duplicate security warning modal!
+      setArrivedWarningRecord(record);
+      return;
+    }
+
+    const arrivedAt = newArrived ? new Date().toISOString() : undefined;
+    setRecords((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, arrived: newArrived, arrivedAt } : r))
+    );
+    if (selectedRecord && selectedRecord.id === id) {
+      setSelectedRecord({ ...selectedRecord, arrived: newArrived, arrivedAt });
+    }
+
+    try {
+      await updatePaymentArrival(id, newArrived);
+      if (newArrived) {
+        setActionSuccessMessage(`✓ Checked in "${record?.teamName || 'Contestant'}"! Arrival recorded.`);
+      } else {
+        setActionSuccessMessage(`Arrival reset for "${record?.teamName || 'Contestant'}".`);
+      }
+    } catch (err: any) {
+      console.error('Arrival update error:', err);
+    }
+    setTimeout(() => setActionSuccessMessage(null), 3500);
+  };
+
   const handleDelete = async (id: string, teamName: string) => {
     if (window.confirm(`Are you sure you want to delete registration for "${teamName}"?`)) {
       await deletePaymentRecord(id);
@@ -210,6 +245,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
   const verifiedCount = records.filter((r) => r.status === 'verified').length;
   const pendingCount = records.filter((r) => r.status === 'pending').length;
   const rejectedCount = records.filter((r) => r.status === 'rejected').length;
+  const arrivedCount = records.filter((r) => r.arrived).length;
+  const notArrivedCount = records.length - arrivedCount;
 
   const hackoraCount = records.filter(
     (r) => r.eventType === 'hackora' || r.eventName?.toLowerCase().includes('hackora')
@@ -252,7 +289,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
           r.eventType === 'expo' ||
           r.eventName?.toLowerCase().includes('expo')));
 
-    const matchesStatus = selectedStatus === 'all' || r.status === selectedStatus;
+    const matchesStatus =
+      selectedStatus === 'all'
+        ? true
+        : selectedStatus === 'arrived'
+        ? Boolean(r.arrived)
+        : selectedStatus === 'not_arrived'
+        ? !r.arrived
+        : r.status === selectedStatus;
 
     return matchesQuery && matchesEvent && matchesStatus;
   });
@@ -658,6 +702,31 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
           <X className="w-3.5 h-3.5" />
           Rejected ({rejectedCount})
         </button>
+        <span className="w-[1px] h-4 bg-slate-800 mx-1 hidden sm:inline-block" />
+        <button
+          type="button"
+          onClick={() => setSelectedStatus('arrived')}
+          className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+            selectedStatus === 'arrived'
+              ? 'bg-cyan-400 text-slate-950 shadow-md'
+              : 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/25'
+          }`}
+        >
+          <MapPinCheck className="w-3.5 h-3.5 text-cyan-400" />
+          Arrived ({arrivedCount})
+        </button>
+        <button
+          type="button"
+          onClick={() => setSelectedStatus('not_arrived')}
+          className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
+            selectedStatus === 'not_arrived'
+              ? 'bg-slate-300 text-slate-950 shadow-md'
+              : 'bg-slate-800/80 border border-slate-700 text-slate-400 hover:bg-slate-850 hover:text-slate-300'
+          }`}
+        >
+          <Clock className="w-3.5 h-3.5" />
+          Not Arrived ({notArrivedCount})
+        </button>
       </div>
 
       {/* Search & Filter Toolbar */}
@@ -704,10 +773,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
               onChange={(e: any) => setSelectedStatus(e.target.value)}
               className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 font-mono text-xs focus:border-cyan-400 focus:outline-none"
             >
-              <option value="all">All Statuses (Pending, Verified, Rejected)</option>
+              <option value="all">All Statuses (Pending, Verified, Rejected, Arrived)</option>
               <option value="pending">Pending Verification</option>
               <option value="verified">Verified & Confirmed</option>
               <option value="rejected">Rejected / Invalid UTR</option>
+              <option value="arrived">Arrived at Venue ({arrivedCount})</option>
+              <option value="not_arrived">Not Yet Arrived ({notArrivedCount})</option>
             </select>
           </div>
         </div>
@@ -895,35 +966,73 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                         )}
                       </td>
 
-                      {/* Verification Status */}
+                      {/* Verification Status & Attendance */}
                       <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                            isVerified
-                              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                              : isRejected
-                              ? 'bg-red-500/20 text-red-300 border border-red-500/40'
-                              : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                          }`}
-                        >
+                        <div className="space-y-1.5">
                           <span
-                            className={`w-1.5 h-1.5 rounded-full ${
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold ${
                               isVerified
-                                ? 'bg-emerald-400'
+                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                                 : isRejected
-                                ? 'bg-red-400'
-                                : 'bg-amber-400 animate-pulse'
+                                ? 'bg-red-500/20 text-red-300 border border-red-500/40'
+                                : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                             }`}
-                          />
-                          <span>
-                            {isVerified ? 'Verified' : isRejected ? 'Rejected' : 'Pending'}
+                          >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                isVerified
+                                  ? 'bg-emerald-400'
+                                  : isRejected
+                                  ? 'bg-red-400'
+                                  : 'bg-amber-400 animate-pulse'
+                              }`}
+                            />
+                            <span>
+                              {isVerified ? 'Verified' : isRejected ? 'Rejected' : 'Pending'}
+                            </span>
                           </span>
-                        </span>
+
+                          {/* Attendance / Arrival Indicator */}
+                          <div>
+                            {r.arrived ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                                <MapPinCheck className="w-2.5 h-2.5 text-cyan-400" />
+                                <span>ARRIVED</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-800/80 text-slate-400 border border-slate-700/60">
+                                <Clock className="w-2.5 h-2.5 text-slate-500" />
+                                <span>NOT ARRIVED</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </td>
 
                       {/* Actions */}
                       <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1.5">
+                          {/* Arrived Button - Right beside Verify and Reject */}
+                          {r.arrived ? (
+                            <button
+                              onClick={() => setArrivedWarningRecord(r)}
+                              className="px-2.5 py-1 rounded-lg bg-emerald-500/25 hover:bg-emerald-500/35 text-emerald-300 border border-emerald-500/50 text-[10px] font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95"
+                              title="Contestant Already Arrived - Click to View Warning & Check-In Details"
+                            >
+                              <MapPinCheck className="w-3 h-3 text-emerald-400" />
+                              <span>Arrived ✓</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleToggleArrived(r.id, true)}
+                              className="px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/40 text-[10px] font-bold transition-all flex items-center gap-1 active:scale-95"
+                              title="Mark Contestant Arrived at Event"
+                            >
+                              <MapPin className="w-3 h-3 text-cyan-400" />
+                              <span>Arrived</span>
+                            </button>
+                          )}
+
                           {!isVerified && (
                             <button
                               onClick={() => handleStatusChange(r.id, 'verified')}
@@ -1008,6 +1117,48 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                   {selectedRecord.status}
                 </span>
               </div>
+
+              {/* Arrival Security Banner in Modal */}
+              {selectedRecord.arrived ? (
+                <div className="p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/50 flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                      <MapPinCheck className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div>
+                      <span className="font-bold text-emerald-300 block">
+                        Contestant Has Already Arrived!
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-sans">
+                        Check-in: {selectedRecord.arrivedAt ? new Date(selectedRecord.arrivedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) + ', ' + new Date(selectedRecord.arrivedAt).toLocaleDateString([], { month: 'short', day: 'numeric' }) : 'Recorded'}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setArrivedWarningRecord(selectedRecord)}
+                    className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold shrink-0"
+                  >
+                    Security Alert
+                  </button>
+                </div>
+              ) : (
+                <div className="p-3 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <Clock className="w-4 h-4 text-slate-500" />
+                    <span>Event Attendance:</span>
+                    <span className="text-slate-300 font-semibold">Not Yet Arrived</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleArrived(selectedRecord.id, true)}
+                    className="px-3 py-1 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold flex items-center gap-1 active:scale-95 transition-all"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    <span>Mark Arrived</span>
+                  </button>
+                </div>
+              )}
 
               {/* Data Grid */}
               <div className="grid grid-cols-2 gap-3 text-xs">
@@ -1173,6 +1324,29 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                 </a>
 
                 <div className="flex items-center gap-2">
+                  {/* Arrived Button in Modal Footer */}
+                  {selectedRecord.arrived ? (
+                    <button
+                      type="button"
+                      onClick={() => setArrivedWarningRecord(selectedRecord)}
+                      className="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 transition-all"
+                      title="Contestant has already arrived"
+                    >
+                      <MapPinCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Arrived ✓</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleToggleArrived(selectedRecord.id, true)}
+                      className="px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-cyan-500/25 active:scale-95 transition-all"
+                      title="Mark Contestant Arrived"
+                    >
+                      <MapPin className="w-3.5 h-3.5" />
+                      <span>Mark Arrived</span>
+                    </button>
+                  )}
+
                   {selectedRecord.status !== 'verified' && (
                     <button
                       onClick={() => handleStatusChange(selectedRecord.id, 'verified')}
@@ -1191,6 +1365,114 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                     </button>
                   )}
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ---------------------------------------------------- */}
+      {/* CONTESTANT ALREADY ARRIVED SECURITY WARNING MODAL */}
+      {/* ---------------------------------------------------- */}
+      <AnimatePresence>
+        {arrivedWarningRecord && (
+          <div
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
+            onClick={() => setArrivedWarningRecord(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="w-full max-w-lg rounded-3xl bg-slate-900 border-2 border-amber-500/70 p-6 shadow-2xl shadow-amber-500/20 space-y-5 font-mono text-xs"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                    <AlertTriangle className="w-6 h-6 text-amber-400 animate-pulse" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-amber-400 uppercase tracking-widest font-bold block">
+                      SECURITY ATTENDANCE ALERT
+                    </span>
+                    <h3 className="text-base sm:text-lg font-black text-white">
+                      Contestant Has Already Arrived!
+                    </h3>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setArrivedWarningRecord(null)}
+                  className="p-1.5 rounded-full text-slate-400 hover:text-white hover:bg-slate-800"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Warning Notice Box */}
+              <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200/90 leading-relaxed font-sans text-xs">
+                ⚠️ <strong>Duplicate Person Prevention:</strong> A contestant for this team has <strong>already checked in</strong> and entered the venue. To ensure no different person is admitted under this registration, please verify their original college photo ID card.
+              </div>
+
+              {/* Contestant Details Card */}
+              <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-2.5">
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                  <span className="text-slate-400">Team Name:</span>
+                  <span className="text-white font-bold">{arrivedWarningRecord.teamName}</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                  <span className="text-slate-400">Leader Name:</span>
+                  <span className="text-cyan-300 font-bold">{arrivedWarningRecord.leaderName}</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                  <span className="text-slate-400">Student USN / ID:</span>
+                  <span className="text-emerald-400 font-bold">{arrivedWarningRecord.studentId || '—'}</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                  <span className="text-slate-400">College:</span>
+                  <span className="text-slate-200 text-right truncate max-w-[220px]">{arrivedWarningRecord.collegeName}</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                  <span className="text-slate-400">Registration Pass Token:</span>
+                  <span className="text-cyan-400 font-bold">{arrivedWarningRecord.registrationToken}</span>
+                </div>
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-slate-400">Check-In Timestamp:</span>
+                  <span className="text-emerald-400 font-bold">
+                    {arrivedWarningRecord.arrivedAt
+                      ? new Date(arrivedWarningRecord.arrivedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) +
+                        ' on ' +
+                        new Date(arrivedWarningRecord.arrivedAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })
+                      : 'Recorded as Arrived'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setArrivedWarningRecord(null)}
+                  className="flex-1 py-3 px-4 rounded-xl bg-brand-gradient text-slate-950 font-bold text-xs shadow-lg shadow-cyan-500/20 active:scale-95 transition-all text-center"
+                >
+                  Contestant Verified (Close)
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm(`Undo arrival check-in for "${arrivedWarningRecord.teamName}"? This will reset their check-in status.`)) {
+                      handleToggleArrived(arrivedWarningRecord.id, false);
+                      setArrivedWarningRecord(null);
+                    }
+                  }}
+                  className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-red-500/20 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-500/40 text-xs font-bold transition-all"
+                  title="Reset check-in status"
+                >
+                  Undo Check-in
+                </button>
               </div>
             </motion.div>
           </div>

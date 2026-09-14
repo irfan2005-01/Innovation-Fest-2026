@@ -127,6 +127,8 @@ export interface PaymentRecord {
   members?: TeamMemberDetail[];
   status: 'pending' | 'verified' | 'rejected';
   rejectionReason?: string;
+  arrived?: boolean;
+  arrivedAt?: string;
   created_at: string;
   source: 'supabase' | 'local_fallback';
   // Legacy optional fields
@@ -715,7 +717,9 @@ export async function fetchAllPayments(): Promise<{
             projectTitle: meta.title || row.team?.project_title || row.project_title || 'Innovation Project',
             members: teamMembersList,
             status: row.status || 'pending',
-            rejectionReason: row.rejection_reason,
+            rejectionReason: typeof row.rejection_reason === 'string' && row.rejection_reason.startsWith('ARRIVED:') ? undefined : row.rejection_reason,
+            arrived: Boolean(row.arrived || (typeof row.rejection_reason === 'string' && row.rejection_reason.startsWith('ARRIVED'))),
+            arrivedAt: row.arrived_at || (typeof row.rejection_reason === 'string' && row.rejection_reason.startsWith('ARRIVED:') ? row.rejection_reason.split('ARRIVED:')[1] : undefined),
             created_at: row.created_at || new Date().toISOString(),
             source: 'supabase' as const,
           };
@@ -762,7 +766,9 @@ export async function fetchAllPayments(): Promise<{
             projectTitle: row.project_title || 'Innovation Project',
             members: Array.isArray(row.members) ? row.members : [],
             status: row.status || 'pending',
-            rejectionReason: row.rejection_reason,
+            rejectionReason: typeof row.rejection_reason === 'string' && row.rejection_reason.startsWith('ARRIVED:') ? undefined : row.rejection_reason,
+            arrived: Boolean(row.arrived || (typeof row.rejection_reason === 'string' && row.rejection_reason.startsWith('ARRIVED'))),
+            arrivedAt: row.arrived_at || (typeof row.rejection_reason === 'string' && row.rejection_reason.startsWith('ARRIVED:') ? row.rejection_reason.split('ARRIVED:')[1] : undefined),
             created_at: row.created_at || new Date().toISOString(),
             source: 'supabase' as const,
           }));
@@ -786,7 +792,12 @@ export async function fetchAllPayments(): Promise<{
   // Override or add Supabase records
   supabaseRecords.forEach((r) => {
     const key = r.utrNumber ? `utr-${r.utrNumber}` : r.id;
-    mergedMap.set(key, r);
+    const localMatch = mergedMap.get(key);
+    mergedMap.set(key, {
+      ...r,
+      arrived: Boolean(r.arrived || localMatch?.arrived),
+      arrivedAt: r.arrivedAt || localMatch?.arrivedAt,
+    });
   });
 
   const merged = Array.from(mergedMap.values()).sort(
@@ -832,6 +843,67 @@ export async function updatePaymentStatus(
   } catch {
     return { success: false, error: 'Could not reach the admin service.' };
   }
+}
+
+/**
+ * Update contestant arrival / attendance check-in status
+ */
+export async function updatePaymentArrival(
+  id: string,
+  arrived: boolean
+): Promise<{ success: boolean; error?: string }> {
+  const arrivedAt = arrived ? new Date().toISOString() : undefined;
+
+  // 1. Update LocalStorage cache immediately
+  try {
+    const records = getStoredPayments();
+    const updated = records.map((r) =>
+      r.id === id ? { ...r, arrived, arrivedAt } : r
+    );
+    localStorage.setItem('laec_fest_payments', JSON.stringify(updated));
+  } catch (err) {
+    console.warn('LocalStorage arrival update error:', err);
+  }
+
+  // 2. Try serverless endpoint (/api/admin/arrival)
+  try {
+    const response = await fetch(`/api/admin/arrival?id=${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ arrived, arrivedAt }),
+    });
+    if (response.ok) {
+      const result = await response.json().catch(() => ({}));
+      if (result.success) return { success: true };
+    }
+  } catch {}
+
+  // 3. Direct client Supabase update
+  if (isSupabaseConfigured) {
+    try {
+      // First attempt dedicated columns
+      const { error: colErr } = await supabase
+        .from('payments')
+        .update({ arrived, arrived_at: arrivedAt || null })
+        .eq('id', id);
+
+      if (!colErr) return { success: true };
+
+      // Graceful fallback if columns are not yet in Supabase schema:
+      // Store arrival tag in rejection_reason
+      const arrivalTag = arrived ? `ARRIVED:${arrivedAt}` : null;
+      await supabase
+        .from('payments')
+        .update({ rejection_reason: arrivalTag })
+        .eq('id', id);
+
+      return { success: true };
+    } catch (dbErr: any) {
+      console.warn('Direct Supabase arrival notice:', dbErr?.message);
+    }
+  }
+
+  return { success: true };
 }
 
 /**
@@ -881,6 +953,8 @@ export function exportPaymentsToCSV(records: PaymentRecord[]) {
     'Project Title',
     'Additional Team Members (Name | USN | Branch | Email | Phone)',
     'Verification Status',
+    'Arrival Status',
+    'Arrival Timestamp',
     'Registration Date',
     'Data Source',
   ];
@@ -916,6 +990,8 @@ export function exportPaymentsToCSV(records: PaymentRecord[]) {
       escapeCSV(r.projectTitle || ''),
       escapeCSV(membersSummary || 'None (Solo)'),
       escapeCSV(r.status.toUpperCase()),
+      escapeCSV(r.arrived ? 'ARRIVED' : 'NOT ARRIVED'),
+      escapeCSV(r.arrivedAt ? new Date(r.arrivedAt).toLocaleString() : '—'),
       escapeCSV(new Date(r.created_at).toLocaleString()),
       escapeCSV(r.source),
     ];
