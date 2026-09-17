@@ -4,7 +4,6 @@ import {
   Trophy,
   ShieldCheck,
   ArrowRight,
-  Download,
   Calendar,
   MapPin,
   Clock,
@@ -24,48 +23,41 @@ import { officialThemes } from '../data/themesData';
 export interface HomePageProps {
   onNavigate: (page: PageId) => void;
   onOpenRegister: () => void;
-  onOpenBrochure: () => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   onNavigate,
   onOpenRegister,
-  onOpenBrochure,
 }) => {
   return (
     <div className="space-y-16 sm:space-y-24 pb-16">
       {/* 1. HERO SECTION & HACKATHON TITLE */}
       <section className="relative pt-8 sm:pt-12 text-center">
-        {/* Ambient Glows */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-cyan-500/15 via-violet-600/15 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+        {/* Subtle Neon Backdrop Ambient */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 sm:w-[500px] h-96 sm:h-[500px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
-        {/* Institutional Micro-badge */}
-        <div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/80 text-[10px] sm:text-xs font-mono text-slate-300 mb-4 shadow-sm backdrop-blur-md max-w-full text-center">
-          <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse shrink-0" />
-          <span className="hidden sm:inline">Lingaraj Appa Engineering College (LAEC), Bidar</span>
-          <span className="sm:hidden">LAEC Bidar</span>
-          <span className="text-slate-600">//</span>
-          <span className="text-cyan-400 font-semibold">Engineers' Day Celebrations 2026</span>
-        </div>
-
-        {/* Umbrella Fest Subtitle */}
-        <div className="mb-3">
-          <span className="text-xs sm:text-sm font-mono tracking-[0.3em] uppercase text-cyan-400 font-bold block">
-            INNOVATION FEST 2026
+        {/* Institution / University Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/80 backdrop-blur-md mb-6 shadow-lg shadow-cyan-500/5">
+          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="text-xs font-mono font-semibold tracking-wider text-slate-300 uppercase">
+            LAEC Bidar • Dept. of Computer Science & Engineering
           </span>
-          <span className="text-xs text-slate-400 italic">“Ideas today. A better tomorrow.”</span>
         </div>
 
-        {/* Brand Official Logo Hero Artwork */}
+        {/* Fest Title Header */}
+        <h2 className="text-xl sm:text-2xl font-bold font-mono tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-purple-400 uppercase mb-3">
+          Innovation Fest 2026
+        </h2>
+
+        {/* Main Hackathon Branding Logo */}
         <HackoraLogo size="hero" className="mb-6" />
 
 
 
-        {/* 3. ANIMATED DIGITAL FEST STAGE (REPLACED STATIC POSTER IMAGE) */}
+        {/* 3. ANIMATED DIGITAL FEST STAGE */}
         <InteractiveFestPoster
           onNavigate={onNavigate}
           onOpenRegister={onOpenRegister}
-          onOpenBrochure={onOpenBrochure}
         />
 
         {/* Event Narrative & Action Buttons */}
@@ -88,11 +80,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.96 }}
-            onClick={onOpenBrochure}
+            onClick={() => onNavigate('events')}
             className="w-full sm:w-auto px-7 py-4 rounded-xl font-mono text-sm font-semibold text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Download className="w-4 h-4 text-cyan-400" />
-            <span>Download Official Brochure</span>
+            <Sparkles className="w-4 h-4 text-cyan-400" />
+            <span>Explore Events & Tracks</span>
           </motion.button>
         </div>
 

@@ -19,7 +19,6 @@ import { BorderBeam } from './ui/BorderBeam';
 interface InteractiveFestPosterProps {
   onNavigate: (page: PageId) => void;
   onOpenRegister: () => void;
-  onOpenBrochure?: () => void;
 }
 
 type TrackKey = 'hackora' | 'ideathon' | 'expo';
@@ -52,13 +51,13 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
   hackora: {
     key: 'hackora',
     tabLabel: 'HACKORA 2026',
-    badge: 'Flagship 24H Hackathon',
+    badge: 'Flagship 24H Hackathon • 21–22 Sep',
     title: 'HACKORA 2026',
     tagline: '24-Hour Continuous National Hackathon Sprint',
     fee: '₹1,200 / team',
     prizePool: '₹35,000+',
     firstPrize: '₹25,000 1st Prize',
-    format: '24-Hour Non-Stop Offline Arena (Overnight Sprint)',
+    format: '24-Hour Non-Stop Offline Arena (21–22 September)',
     teamSize: '2–4 Builders / Team',
     color: {
       primary: 'cyan',
@@ -86,13 +85,13 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
   ideathon: {
     key: 'ideathon',
     tabLabel: 'IDEATHON 2026',
-    badge: 'Concept & Vision Sprint',
+    badge: 'Pitch Challenge • 22 Sep',
     title: 'IDEATHON 2026',
     tagline: 'Think It. Pitch It. Transform It.',
     fee: '₹250 / team',
     prizePool: '₹5,000+',
     firstPrize: '₹3,000 1st Prize',
-    format: 'Pitch Deck & Live Presentation to Expert Jury',
+    format: 'Live Presentation to Expert Jury (22 September 2026)',
     teamSize: '1–2 Members / Team',
     color: {
       primary: 'purple',
@@ -103,7 +102,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
       gradient: 'from-purple-500 via-pink-500 to-rose-500',
     },
     highlights: [
-      'Present problem-solving decks directly to industry leaders',
+      'Present problem-solving decks directly to industry leaders on 22 Sep',
       'Refine market viability, monetization, and technical roadmaps',
       'Citations for Most Socially Impactful and Best Feasibility',
       'Official Certificate of Participation for every presenter',
@@ -120,13 +119,13 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
   expo: {
     key: 'expo',
     tabLabel: 'PROJECT EXPO 2026',
-    badge: 'Physical Working Model Expo',
+    badge: 'Working Model Expo • 22 Sep',
     title: 'PROJECT EXPO 2026',
     tagline: 'Physical Hardware & Working Prototype Exhibition',
     fee: '₹250 / team',
     prizePool: '₹5,000+',
     firstPrize: '₹3,000 1st Prize',
-    format: 'Live Working Hardware Demonstration on Expo Floor',
+    format: 'Live Working Hardware Demonstration on Expo Floor (22 September 2026)',
     teamSize: '1–2 Builders / Team',
     color: {
       primary: 'emerald',

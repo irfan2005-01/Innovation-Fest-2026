@@ -58,7 +58,7 @@ const EVENTS: Record<EventKey, EventConfig> = {
   hackora: {
     id: 'hackora',
     name: 'HACKORA 2026',
-    category: '24-Hour State-Level Hackathon',
+    category: '24-Hour Hackathon (21–22 Sep)',
     tagline: 'Continuous sprint of software & smart system engineering',
     feeNumber: 1200,
     feeDisplay: '₹1,200',
@@ -73,7 +73,7 @@ const EVENTS: Record<EventKey, EventConfig> = {
   ideathon: {
     id: 'ideathon',
     name: 'IDEATHON 2026',
-    category: 'Pitch & Solution Challenge',
+    category: 'Pitch Challenge (22 September)',
     tagline: 'High-impact technical problem solving & innovation pitching',
     feeNumber: 250,
     feeDisplay: '₹250',
@@ -88,7 +88,7 @@ const EVENTS: Record<EventKey, EventConfig> = {
   expo: {
     id: 'expo',
     name: 'PROJECT EXPO 2026',
-    category: 'Physical Working Model Exhibition',
+    category: 'Working Model Expo (22 September)',
     tagline: 'Working physical prototypes & engineering demonstrations',
     feeNumber: 250,
     feeDisplay: '₹250',

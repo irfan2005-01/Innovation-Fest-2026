@@ -1,17 +1,15 @@
 import React from 'react';
-import { MapPin, Globe, ArrowUp, Mail, Phone, MessageCircle, Instagram, FileText } from 'lucide-react';
+import { MapPin, Globe, ArrowUp, Mail, Phone, MessageCircle, Instagram } from 'lucide-react';
 import { RotatingO } from './HackoraLogo';
 import { PageId } from '../types';
 
 interface FooterProps {
   onNavigate: (page: PageId) => void;
-  onOpenBrochure: () => void;
   onOpenRegister: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   onNavigate,
-  onOpenBrochure,
   onOpenRegister,
 }) => {
   const scrollToTop = () => {
@@ -66,13 +64,6 @@ export const Footer: React.FC<FooterProps> = ({
               >
                 Register & Pay Online
               </button>
-              <button
-                onClick={onOpenBrochure}
-                className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-200 text-xs font-mono font-semibold transition-all flex items-center gap-1.5"
-              >
-                <FileText className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Event Brochure</span>
-              </button>
             </div>
 
             {/* Quick Page Links */}
@@ -117,13 +108,6 @@ export const Footer: React.FC<FooterProps> = ({
                 className="hover:text-cyan-400 transition-colors"
               >
                 Hospitality
-              </button>
-              <span className="text-slate-700">•</span>
-              <button
-                onClick={() => onNavigate('resources')}
-                className="hover:text-cyan-400 transition-colors"
-              >
-                Resources
               </button>
               <span className="text-slate-700">•</span>
               <button

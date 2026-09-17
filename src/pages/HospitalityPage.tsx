@@ -173,10 +173,10 @@ export const HospitalityPage: React.FC<HospitalityPageProps> = ({ onNavigate, on
       {/* Action Footer */}
       <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
         <button
-          onClick={() => onNavigate('resources')}
+          onClick={() => onNavigate('faq')}
           className="inline-flex items-center gap-2 text-sm font-mono text-cyan-400 hover:underline"
         >
-          <span>Next: Explore Official Brochures & Posters</span>
+          <span>Next: Review Rules & FAQ</span>
           <ArrowRight className="w-4 h-4" />
         </button>
 

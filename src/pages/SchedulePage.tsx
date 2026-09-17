@@ -42,14 +42,14 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({ onNavigate, onOpenRe
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50 border border-transparent'
               }`}
             >
-              {tab === 'All' ? 'All Milestones & Checkpoints' : tab === 'Day 1' ? 'Day 1: Kick-Off & Reviews' : 'Day 2: Freeze & Juries'}
+              {tab === 'All' ? 'All Milestones & Tracks' : tab === 'Day 1' ? 'Day 1 (21 Sep): Hackathon Kick-Off' : 'Day 2 (22 Sep): Ideathon, Expo & Finals'}
             </button>
           ))}
         </div>
 
         <div className="text-xs font-mono text-slate-400 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
-          <span>Kick-Off 11:00 AM (21 Sep) • Code Freeze 11:00 AM (22 Sep)</span>
+          <span>HACKORA Kick-Off 11:00 AM (21 Sep) • IDEATHON & PROJECT EXPO (22 Sep)</span>
         </div>
       </div>
 

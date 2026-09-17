@@ -26,7 +26,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'events', label: 'Events' },
     { id: 'themes', label: '6 Themes' },
     { id: 'schedule', label: 'Schedule' },
-    { id: 'resources', label: 'Resources' },
     { id: 'faq', label: 'FAQ & Rules' },
     { id: 'sponsors', label: 'Sponsors' },
   ];
@@ -173,7 +172,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   }}
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold text-slate-950 bg-brand-gradient shadow-lg shadow-cyan-500/20"
                 >
-                  <span>Register & Pay Online (Deadline: 18 Sep)</span>
+                  <span>Register & Pay Online (Deadline: 19 Sep)</span>
                   <ArrowUpRight className="w-4 h-4" />
                 </button>
               </div>

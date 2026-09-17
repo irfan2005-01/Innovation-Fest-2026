@@ -1,14 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, MapPin, Users, Flame, Download, ArrowRight, Radio } from 'lucide-react';
+import { Calendar, MapPin, Users, Flame, ArrowRight, Radio } from 'lucide-react';
 import { CountdownTimer } from './CountdownTimer';
 
 interface HeroProps {
   onOpenRegister: () => void;
-  onOpenBrochure: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenRegister, onOpenBrochure }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
   const metadataItems = [
     {
       icon: Calendar,
@@ -151,14 +150,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister, onOpenBrochure }) =>
           >
             <span>Register & Pay Online</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
-
-          <button
-            onClick={onOpenBrochure}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-sm font-semibold text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-600 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2.5 backdrop-blur-md"
-          >
-            <Download className="w-4 h-4 text-nexora-cyan" />
-            <span>Download Brochure (PDF)</span>
           </button>
         </motion.div>
 

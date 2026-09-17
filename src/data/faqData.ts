@@ -27,14 +27,14 @@ export const faqData: FAQItem[] = [
     category: 'General',
     question: 'What are the official dates, timing, and venue?',
     answer:
-      'The event takes place on 21–22 September 2026 at the Central Computing Arena, Lingaraj Appa Engineering College (LAEC), Bidar, Karnataka. Check-in begins at 9:00 AM on 21 September, Hackora kicks off at 11:00 AM, and the valedictory ceremony concludes at 5:00 PM on 22 September.',
+      'The event takes place on 21–22 September 2026 at the Central Computing Arena, Lingaraj Appa Engineering College (LAEC), Bidar, Karnataka. Check-in begins at 9:00 AM on 21 September, HACKORA kicks off at 11:00 AM (21–22 Sep overnight hackathon), while IDEATHON 2026 and PROJECT EXPO 2026 take place on 22 September 2026. The valedictory ceremony concludes at 5:00 PM on 22 September.',
   },
   {
     id: 'faq-5',
     category: 'General',
     question: 'When do registrations close and what are the registration fees?',
     answer:
-      'Official registrations close on 18 September 2026 at 11:59 PM IST. The entry fees are: HACKORA 2026: ₹1,200 per team; IDEATHON 2026: ₹250 per team; PROJECT EXPO 2026: ₹300 per team. Registration includes campus access, meals, Wi-Fi, builder kits, and certificates.',
+      'Official registrations close on 19 September 2026 at 11:59 PM IST (students can register through the entire day of 19 September). The entry fees are: HACKORA 2026: ₹1,200 per team; IDEATHON 2026: ₹250 per team; PROJECT EXPO 2026: ₹250 per team. Registration includes campus access, meals, Wi-Fi, builder kits, and certificates.',
   },
   {
     id: 'faq-6',

@@ -9,12 +9,10 @@ import { EventsPage } from './pages/EventsPage';
 import { ThemesPage } from './pages/ThemesPage';
 import { SchedulePage } from './pages/SchedulePage';
 import { HospitalityPage } from './pages/HospitalityPage';
-import { ResourcesPage } from './pages/ResourcesPage';
 import { SponsorsPage } from './pages/SponsorsPage';
 import { FAQPage } from './pages/FAQPage';
 import { AdminPage } from './pages/AdminPage';
 import { RegistrationModal } from './components/modals/RegistrationModal';
-import { BrochureModal } from './components/modals/BrochureModal';
 import { SponsorModal } from './components/modals/SponsorModal';
 import { PageId } from './types';
 
@@ -49,7 +47,6 @@ export function App() {
     'tracks',
     'schedule',
     'hospitality',
-    'resources',
     'sponsors',
     'faq',
     'admin',
@@ -63,7 +60,6 @@ export function App() {
 
   const [currentPage, setCurrentPage] = useState<PageId>(getInitialPage);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
-  const [brochureModalOpen, setBrochureModalOpen] = useState(false);
   const [sponsorModalOpen, setSponsorModalOpen] = useState(false);
 
   // Sync page changes with hash
@@ -126,7 +122,6 @@ export function App() {
               <HomePage
                 onNavigate={navigateTo}
                 onOpenRegister={() => setRegisterModalOpen(true)}
-                onOpenBrochure={() => setBrochureModalOpen(true)}
               />
             )}
             {currentPage === 'about' && (
@@ -159,12 +154,6 @@ export function App() {
                 onOpenRegister={() => setRegisterModalOpen(true)}
               />
             )}
-            {currentPage === 'resources' && (
-              <ResourcesPage
-                onNavigate={navigateTo}
-                onOpenRegister={() => setRegisterModalOpen(true)}
-              />
-            )}
             {currentPage === 'sponsors' && (
               <SponsorsPage
                 onNavigate={navigateTo}
@@ -193,7 +182,6 @@ export function App() {
         <Footer
           onNavigate={navigateTo}
           onOpenRegister={() => setRegisterModalOpen(true)}
-          onOpenBrochure={() => setBrochureModalOpen(true)}
         />
       </div>
 
@@ -201,10 +189,6 @@ export function App() {
       <RegistrationModal
         isOpen={registerModalOpen}
         onClose={() => setRegisterModalOpen(false)}
-      />
-      <BrochureModal
-        isOpen={brochureModalOpen}
-        onClose={() => setBrochureModalOpen(false)}
       />
       <SponsorModal
         isOpen={sponsorModalOpen}
