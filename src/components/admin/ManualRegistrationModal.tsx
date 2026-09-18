@@ -81,17 +81,25 @@ export const ManualRegistrationModal: React.FC<ManualRegistrationModalProps> = (
   const [copiedToken, setCopiedToken] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // USN Discount Check (10% on Hackathon only for USNs with 'LA' or 'U27...')
+  // USN & College Discount Check (10% on Hackathon strictly for LAEC students)
   const isUsnEligible = (usnVal: string | undefined | null): boolean => {
     if (!usnVal) return false;
     const clean = usnVal.toUpperCase().trim();
-    return clean.length >= 4 && (clean.includes('LA') || clean.includes('U27XK') || clean.startsWith('U27'));
+    return clean.length >= 3 && (clean.includes('3LA') || clean.startsWith('LAEC') || /^LA\d/i.test(clean));
   };
 
-  const hasEligibleUsn =
-    isUsnEligible(leaderUsn) || members.some((m) => isUsnEligible(m.usn));
+  const isCollegeEligible = (collegeVal: string | undefined | null): boolean => {
+    if (!collegeVal) return false;
+    const clean = collegeVal.toLowerCase().trim();
+    return clean.includes('laec') || clean.includes('lingaraj');
+  };
 
-  const isDiscountApplicable = eventType === 'hackora' && hasEligibleUsn;
+  const hasEligibleDiscount =
+    isUsnEligible(leaderUsn) ||
+    members.some((m) => isUsnEligible(m.usn)) ||
+    isCollegeEligible(collegeName);
+
+  const isDiscountApplicable = eventType === 'hackora' && hasEligibleDiscount;
 
   // Auto-calculate fee based on event and discount eligibility (unless overridden)
   useEffect(() => {
@@ -602,7 +610,7 @@ export const ManualRegistrationModal: React.FC<ManualRegistrationModalProps> = (
                 {isDiscountApplicable && (
                   <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold animate-pulse">
                     <BadgePercent className="w-3.5 h-3.5" />
-                    <span>10% College Discount Applied (₹1,080)</span>
+                    <span>10% LAEC Student Discount Applied (₹1,080)</span>
                   </div>
                 )}
               </div>
@@ -773,7 +781,7 @@ export const ManualRegistrationModal: React.FC<ManualRegistrationModalProps> = (
               <div className="text-xs uppercase tracking-wider text-slate-400 font-bold flex items-center justify-between">
                 <span>Payment & Verification Record</span>
                 <span className="text-cyan-400 font-bold">
-                  Fee: ₹{amount} {isDiscountApplicable && '(10% Off)'}
+                  Fee: ₹{amount} {isDiscountApplicable && '(10% LAEC Off)'}
                 </span>
               </div>
 

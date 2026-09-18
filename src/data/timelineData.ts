@@ -101,10 +101,10 @@ export const timelineData: TimelineItem[] = [
     title: 'PROJECT EXPO 2026 Live Demonstrations & Model Exhibition',
     checkpointNumber: '06',
     description:
-      'Project Expo participants demonstrate functional hardware models, embedded IoT devices, and software prototypes live across exhibition stalls.',
+      'Project Expo participants demonstrate functional software applications, web/mobile platforms, AI/ML models, and hardware/IoT prototypes live across exhibition stalls.',
     type: 'checkpoint',
     status: 'upcoming',
-    tags: ['Project Expo', '22 September', 'Hardware Demo', 'Exhibition Floor'],
+    tags: ['Project Expo', '22 September', 'Software & Hardware', 'Exhibition Floor'],
   },
   {
     id: 't-10',

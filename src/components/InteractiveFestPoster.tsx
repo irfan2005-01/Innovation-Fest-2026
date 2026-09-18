@@ -69,7 +69,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
     },
     highlights: [
       '24 hours continuous hacking at Central Computing Arena, LAEC',
-      'Special citations: Best UI/UX, Most Innovative, & Best Architecture',
+      '1st Prize: ₹25,000 + Gold Trophy | 2nd Prize: ₹10,000 + Silver Trophy',
       'Free overnight computing labs, high-speed Wi-Fi, and refreshments',
       'Official VTU-recognized Certificate of Participation for all builders',
     ],
@@ -104,7 +104,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
     highlights: [
       'Present problem-solving decks directly to industry leaders on 22 Sep',
       'Refine market viability, monetization, and technical roadmaps',
-      'Citations for Most Socially Impactful and Best Feasibility',
+      '1st Prize: ₹3,000 | 2nd Prize: ₹2,000',
       'Official Certificate of Participation for every presenter',
     ],
     terminalLogs: [
@@ -119,13 +119,13 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
   expo: {
     key: 'expo',
     tabLabel: 'PROJECT EXPO 2026',
-    badge: 'Working Model Expo • 22 Sep',
+    badge: 'Software & Working Model Expo • 22 Sep',
     title: 'PROJECT EXPO 2026',
-    tagline: 'Physical Hardware & Working Prototype Exhibition',
+    tagline: 'Software Apps, AI/ML & Working Model Exhibition (All Branches)',
     fee: '₹250 / team',
-    prizePool: '₹5,000+',
+    prizePool: '₹5,000',
     firstPrize: '₹3,000 1st Prize',
-    format: 'Live Working Hardware Demonstration on Expo Floor (22 September 2026)',
+    format: 'Live Software & Prototype Demonstration on Expo Floor (22 September 2026)',
     teamSize: '1–2 Builders / Team',
     color: {
       primary: 'emerald',
@@ -136,19 +136,19 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
       gradient: 'from-emerald-500 via-teal-500 to-cyan-500',
     },
     highlights: [
-      'Dedicated exhibition booth with power outlets and display space',
-      'Demonstrate working hardware models and physical circuits live',
-      'Special awards for Best Engineering Craftsmanship and Working Demo',
+      'Dedicated exhibition booth with power outlets, Wi-Fi, and display space',
+      'Demonstrate working software apps, AI/ML systems, or IoT models live',
+      '1st Prize: ₹3,000 | 2nd Prize: ₹2,000',
       'Official Certificate of Participation for all squad members',
     ],
     terminalLogs: [
       'sys: expo_hall configured [STALL_SLOTS_ALLOCATED]',
-      'pwr: 230V AC regulated supply at each team workstation',
-      'demo: live prototype execution before evaluating engineers',
-      'scope: mechanical, electrical, electronics & embedded systems',
+      'pwr: 230V AC regulated supply & WiFi access at each team booth',
+      'demo: live software & prototype execution before evaluating engineers',
+      'scope: software applications, web/mobile, AI/ML, IoT & all engineering branches',
       'status: REGISTRATION_OPEN // DEMO SLOTS LIMITED',
     ],
-    tags: ['IoT Hardware', 'Robotics', 'EV Systems', 'Automation', 'Sensors'],
+    tags: ['Web & Mobile Apps', 'AI / ML Models', 'IoT & Embedded', 'Robotics', 'All Branches'],
   },
 };
 

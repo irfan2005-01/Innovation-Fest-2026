@@ -19,8 +19,8 @@ export const eventsData: EventItem[] = [
     accentBadge: 'Flagship 24H Sprint • 21–22 Sep',
     highlights: [
       'Open innovation tracks across 6 official themes',
-      'Mentorship sessions throughout the 24-hour sprint',
-      'Special citations for Best UI/UX, Most Innovative, and Best Technical Architecture',
+      'Continuous mentorship sessions throughout the 24-hour sprint',
+      '1st Prize: ₹25,000 + Gold Trophy | 2nd Prize: ₹10,000 + Silver Trophy',
       'Direct pitch opportunities to startup incubators and VC networks',
       'Official VTU-affiliated Certificate of Participation for all verified builders',
     ],
@@ -42,7 +42,7 @@ export const eventsData: EventItem[] = [
       'Develop an innovative solution to a real-world problem and present your idea with clarity, creativity, and conviction before an expert jury of industry leaders and researchers on 22 September 2026.',
     teamSize: '1–2 Members',
     fee: '₹250 / team',
-    prizePool: '₹5,000+',
+    prizePool: '₹5,000',
     firstPrize: '₹3,000',
     secondPrize: '₹2,000',
     format: 'Live Concept Pitch & Jury Presentation (22 September 2026)',
@@ -52,7 +52,7 @@ export const eventsData: EventItem[] = [
     highlights: [
       'Present to industry leaders and academic evaluators on 22 September',
       'Refine problem definition, market feasibility, and execution roadmap',
-      'Citations for most innovative business model and societal impact',
+      '1st Prize: ₹3,000 | 2nd Prize: ₹2,000',
       'Official Certificate of Participation for all presenters',
     ],
     rules: [
@@ -67,45 +67,79 @@ export const eventsData: EventItem[] = [
     id: 'expo',
     name: 'PROJECT EXPO 2026',
     tagline: 'SHOWCASE. INSPIRE. CREATE IMPACT.',
-    subtitle: 'Project Exhibition 2026',
+    subtitle: 'Software & Working Model Exhibition 2026',
     description:
-      'Exhibit your working hardware model, software system, or research project directly to industry evaluators, faculty experts, and peer innovators on 22 September 2026 at the LAEC campus.',
+      'Exhibit your working software system, web/mobile application, AI/ML prototype, IoT or engineering model directly to industry evaluators, faculty experts, and peer innovators on 22 September 2026 at the LAEC campus. Open to students across all engineering branches (CSE, ISE, ECE, Mech, Civil, etc.)!',
     teamSize: '1–2 Members',
     fee: '₹250 / team',
-    prizePool: '₹5,000+',
+    prizePool: '₹5,000',
     firstPrize: '₹3,000',
     secondPrize: '₹2,000',
-    format: 'In-Person Hardware & Software Model Showcase (22 September 2026)',
+    format: 'In-Person Software & Working Model Showcase (22 September 2026)',
     iconName: 'Box',
     colorTheme: 'emerald',
     accentBadge: 'Exhibition & Demo • 22 Sep',
     highlights: [
       'Dedicated booth table with power access in the LAEC exhibition hall',
-      'Live interactive demonstration to visiting jury panels',
-      'Hardware, embedded IoT, and mechanical models actively encouraged',
-      'Official Certificate of Participation and Project Recognition',
+      'Live interactive demonstration before visiting jury panels',
+      'Open to all domains: Software apps, AI/ML models, IoT systems, and working prototypes across all branches',
+      '1st Prize: ₹3,000 | 2nd Prize: ₹2,000',
+      'Official Certificate of Participation for all exhibitors',
     ],
     rules: [
       'Each team must consist of 1–2 members.',
-      'Projects must be functional and demonstrated live before the jury.',
-      'Teams must bring all required hardware, sensors, laptops, and cables.',
-      'Slide deck (PPT) must accompany the demonstration.',
+      'Projects must be functional and demonstrated live before the jury (software demos on laptops or physical setups).',
+      'Teams must bring their laptops, setups, and any necessary accessories or power adapters.',
+      'Slide deck (PPT) or documentation should accompany the live demonstration.',
       'The jury decision will be final.',
     ],
   },
 ];
 
+export interface TrackPrizeInfo {
+  eventId: string;
+  name: string;
+  category: string;
+  pool: string;
+  firstPrize: string;
+  secondPrize: string;
+  color: 'cyan' | 'purple' | 'emerald';
+}
+
 export const consolidatedPrizes = {
   totalPool: '₹45,000+',
   hackora: '₹35,000 (1st: ₹25,000, 2nd: ₹10,000)',
-  ideathon: '₹5,000+ (1st: ₹3,000, 2nd: ₹2,000)',
-  expo: '₹5,000+ (1st: ₹3,000, 2nd: ₹2,000)',
-  specialRecognitions: [
-    { label: 'Best UI / UX', icon: 'Sparkles', color: 'text-cyan-400' },
-    { label: 'All-Women Team', icon: 'Users', color: 'text-purple-400' },
-    { label: 'Most Innovative', icon: 'Star', color: 'text-amber-400' },
-    { label: 'Best Architecture', icon: 'Cpu', color: 'text-blue-400' },
-    { label: 'VTU Certificate', icon: 'FileCheck', color: 'text-emerald-400' },
-  ],
+  ideathon: '₹5,000 (1st: ₹3,000, 2nd: ₹2,000)',
+  expo: '₹5,000 (1st: ₹3,000, 2nd: ₹2,000)',
+  tracks: [
+    {
+      eventId: 'hackora',
+      name: 'HACKORA 2026',
+      category: '24-Hour National Hackathon',
+      pool: '₹35,000',
+      firstPrize: '₹25,000 + Gold Trophy',
+      secondPrize: '₹10,000 + Silver Trophy',
+      color: 'cyan',
+    },
+    {
+      eventId: 'ideathon',
+      name: 'IDEATHON 2026',
+      category: 'Pitch Competition (22 Sep)',
+      pool: '₹5,000',
+      firstPrize: '₹3,000 Cash Grant',
+      secondPrize: '₹2,000 Cash Grant',
+      color: 'purple',
+    },
+    {
+      eventId: 'expo',
+      name: 'PROJECT EXPO 2026',
+      category: 'Software & Working Model Expo (22 Sep)',
+      pool: '₹5,000',
+      firstPrize: '₹3,000 Cash Grant',
+      secondPrize: '₹2,000 Cash Grant',
+      color: 'emerald',
+    },
+  ] as TrackPrizeInfo[],
+  certificateNote: 'Official Certificate of Participation for all verified participants across all tracks.',
 };
 

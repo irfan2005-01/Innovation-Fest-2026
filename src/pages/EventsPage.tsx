@@ -12,9 +12,6 @@ import {
   ArrowRight,
   ShieldCheck,
   Sparkles,
-  Star,
-  Cpu,
-  FileCheck,
 } from 'lucide-react';
 import { SectionHeading } from '../components/ui/SectionHeading';
 import { eventsData, consolidatedPrizes } from '../data/eventsData';
@@ -247,37 +244,125 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onNavigate, onOpenRegist
         })}
       </div>
 
-      {/* Special Recognitions & Consolidated Pool Summary */}
-      <div className="mt-12 p-8 rounded-2xl bg-gradient-to-br from-slate-900/90 via-obsidian-900 to-slate-900/90 border border-slate-700/80">
-        <div className="text-center max-w-xl mx-auto mb-6">
-          <div className="text-xs font-mono text-cyan-400 uppercase tracking-wider font-bold mb-1">
-            CONSOLIDATED EVENT PRIZE POOL
+      {/* 1st & 2nd Prize Breakdown & Participation Certificates */}
+      <div className="mt-12 p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-slate-900/90 via-obsidian-900 to-slate-900/90 border border-slate-700/80">
+        <div className="text-center max-w-xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-xs font-mono text-amber-400 mb-2">
+            <Trophy className="w-3.5 h-3.5 text-amber-400" />
+            <span>OFFICIAL TRACK AWARDS // 1ST & 2ND PRIZES ONLY</span>
           </div>
-          <h3 className="text-2xl font-bold font-display text-white">
-            ₹45,000+ Total Cash Grants & Citations
+          <h3 className="text-2xl sm:text-3xl font-bold font-display text-white">
+            ₹45,000+ Total Cash Grants & Trophies
           </h3>
           <p className="text-xs text-slate-400 font-mono mt-1">
-            Plus official VTU-affiliated Certificate of Participation for every verified participant
+            Excellence awards for 1st & 2nd place squads, plus official VTU-affiliated Certificate of Participation for every verified participant.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {consolidatedPrizes.specialRecognitions.map((rec, i) => (
-            <div
-              key={i}
-              className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 text-center flex flex-col items-center justify-center gap-2 hover:border-slate-700 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
-                {rec.icon === 'Sparkles' && <Sparkles className="w-5 h-5 text-cyan-400" />}
-                {rec.icon === 'Users' && <Users className="w-5 h-5 text-purple-400" />}
-                {rec.icon === 'Star' && <Star className="w-5 h-5 text-amber-400" />}
-                {rec.icon === 'Cpu' && <Cpu className="w-5 h-5 text-blue-400" />}
-                {rec.icon === 'FileCheck' && <FileCheck className="w-5 h-5 text-emerald-400" />}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {consolidatedPrizes.tracks.map((track) => {
+            const isHackora = track.eventId === 'hackora';
+            const isIdeathon = track.eventId === 'ideathon';
+
+            return (
+              <div
+                key={track.eventId}
+                className={`p-5 sm:p-6 rounded-2xl bg-slate-950/80 border transition-all flex flex-col justify-between ${
+                  isHackora
+                    ? 'border-cyan-500/40 shadow-lg shadow-cyan-500/10'
+                    : isIdeathon
+                    ? 'border-purple-500/40 shadow-lg shadow-purple-500/10'
+                    : 'border-emerald-500/40 shadow-lg shadow-emerald-500/10'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span
+                      className={`text-[11px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${
+                        isHackora
+                          ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30'
+                          : isIdeathon
+                          ? 'bg-purple-500/10 text-purple-300 border-purple-500/30'
+                          : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+                      }`}
+                    >
+                      {track.category}
+                    </span>
+                    <span className="text-xs font-mono text-slate-400 font-bold">
+                      {track.pool} Pool
+                    </span>
+                  </div>
+
+                  <h4 className="text-lg font-bold font-display text-white mb-4">
+                    {track.name}
+                  </h4>
+
+                  {/* 1st Prize */}
+                  <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 mb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span className="text-xs font-mono font-bold text-amber-300">
+                          1st Prize (Winner)
+                        </span>
+                      </div>
+                      <span className="text-sm font-black font-mono text-white">
+                        {track.firstPrize.split(' ')[0]}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono mt-1 pl-6">
+                      {track.firstPrize}
+                    </div>
+                  </div>
+
+                  {/* 2nd Prize */}
+                  <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Trophy className="w-4 h-4 text-slate-400 shrink-0" />
+                        <span className="text-xs font-mono font-bold text-slate-300">
+                          2nd Prize (Runner-Up)
+                        </span>
+                      </div>
+                      <span className="text-sm font-black font-mono text-white">
+                        {track.secondPrize.split(' ')[0]}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono mt-1 pl-6">
+                      {track.secondPrize}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center gap-2 text-[11px] font-mono text-slate-400">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Certificates of Excellence + Cash Grant</span>
+                </div>
               </div>
-              <span className="text-xs font-bold text-slate-200 font-sans">{rec.label}</span>
-              <span className="text-[10px] font-mono text-slate-400">Excellence Award</span>
+            );
+          })}
+        </div>
+
+        {/* Universal Participation Certificate Strip */}
+        <div className="mt-6 p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/30 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300 shrink-0">
+              <ShieldCheck className="w-5 h-5" />
             </div>
-          ))}
+            <div>
+              <div className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                Universal Certificate of Participation
+              </div>
+              <div className="text-[11px] text-slate-400 font-mono">
+                Awarded to every verified participant who presents their project live on 21–22 September 2026.
+              </div>
+            </div>
+          </div>
+          <div className="shrink-0">
+            <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono text-[11px] font-bold">
+              100% OF PARTICIPANTS
+            </span>
+          </div>
         </div>
 
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">

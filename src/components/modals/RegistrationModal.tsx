@@ -88,8 +88,8 @@ const EVENTS: Record<EventKey, EventConfig> = {
   expo: {
     id: 'expo',
     name: 'PROJECT EXPO 2026',
-    category: 'Working Model Expo (22 September)',
-    tagline: 'Working physical prototypes & engineering demonstrations',
+    category: 'Software & Working Model Expo (22 September)',
+    tagline: 'Working software apps, AI/ML models, IoT & engineering prototypes (all branches)',
     feeNumber: 250,
     feeDisplay: '₹250',
     teamSizeLabel: '1 to 2 Members',
@@ -280,7 +280,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
     }
 
     if (selectedEvent === 'expo' && !expoModelTitle.trim()) {
-      setSubmitError('Please enter your Physical Working Model Title.');
+      setSubmitError('Please enter your Project / Working Model Title.');
       return;
     }
 
@@ -322,23 +322,19 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
 
   const currentEvent = EVENTS[selectedEvent];
 
-  // 10% Discount for LAEC & Associated/Sister Institution Students (e.g., USNs containing "LA" like 3LA23CS106 or "U27XK" like U27XK25S0005) on Hackathon only:
+  // 10% Discount strictly for Lingaraj Appa Engineering College (LAEC) students on Hackathon only:
   const isUsnEligible = (usnVal: string | undefined | null): boolean => {
     if (!usnVal) return false;
     const clean = usnVal.toUpperCase().trim();
-    return clean.includes('LA') || clean.includes('U27XK') || clean.startsWith('U27');
+    // VTU USN for LAEC is 3LA (e.g., 3LA23CS106) or starting with LAEC or LA followed by digits
+    return clean.includes('3LA') || clean.startsWith('LAEC') || /^LA\d/i.test(clean);
   };
 
   const isCollegeEligible = (collegeVal: string | undefined | null): boolean => {
     if (!collegeVal) return false;
     const clean = collegeVal.toLowerCase().trim();
-    return (
-      clean.includes('laec') ||
-      clean.includes('lingaraj') ||
-      clean.includes('channabasamma') ||
-      clean.includes('cb bca') ||
-      clean.includes('cb bcom')
-    );
+    // Strictly Lingaraj Appa Engineering College (LAEC) only
+    return clean.includes('laec') || clean.includes('lingaraj');
   };
 
   const isLeaderDiscountEligible = isUsnEligible(leaderUsn) || isCollegeEligible(collegeName);
@@ -660,18 +656,18 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                   {selectedEvent === 'expo' && (
                     <div>
                       <label className="block text-[11px] font-mono text-slate-300 mb-1">
-                        Working Model Display Title *
+                        Working Model / Project Display Title *
                       </label>
                       <input
                         type="text"
                         required
                         value={expoModelTitle}
                         onChange={(e) => setExpoModelTitle(e.target.value)}
-                        placeholder="Enter working model display title"
+                        placeholder="Enter software or working model project title"
                         className="w-full px-3 py-2.5 rounded-xl bg-slate-900 border border-emerald-500/40 text-white text-xs font-mono focus:border-emerald-400 focus:outline-none"
                       />
                       <p className="text-[10px] font-mono text-slate-400 mt-1.5">
-                        Provide the name of the physical working prototype or model you will display.
+                        Provide the title of your software app, AI/ML model, IoT system, or working prototype. Open to all engineering branches!
                       </p>
                     </div>
                   )}
@@ -892,7 +888,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                           </span>
                           <span className="text-[9px] sm:text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
                             <Sparkles className="w-3 h-3 text-emerald-400" />
-                            10% COLLEGE DISCOUNT
+                            10% LAEC STUDENT DISCOUNT
                           </span>
                         </>
                       ) : (
@@ -982,7 +978,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                         Verification Pending
                       </span>
                       <div className="text-[10px] text-slate-400 mt-1">
-                        Fee: ₹{receiptRecord.amount} {Number(receiptRecord.amount) === 1080 ? '(10% College Discounted)' : ''} (Paid via UPI)
+                        Fee: ₹{receiptRecord.amount} {Number(receiptRecord.amount) === 1080 ? '(10% LAEC Discounted)' : ''} (Paid via UPI)
                       </div>
                     </div>
                   </div>

@@ -207,15 +207,15 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="pt-6 mt-6 border-t border-slate-800 space-y-2 text-xs font-mono text-slate-300">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>The Prestigious HACKORA 2026 Gold Trophy</span>
+                <span>1st Prize (Winners) & 2nd Prize (Runners-Up) cash awards across all 3 tracks</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>Direct Investor & Incubation Pitch Opportunities</span>
+                <span>The Prestigious HACKORA 2026 Winner Gold & Runner-Up Silver Trophies</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>Winner Citation Certificate signed by LAEC & VTU</span>
+                <span>Official Winner Citation Certificates signed by LAEC & VTU</span>
               </div>
             </div>
           </SpotlightCard>
@@ -256,15 +256,15 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="pt-6 mt-6 border-t border-slate-800 space-y-2 text-xs font-mono text-slate-300">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>Digitally Verifiable VTU Participation Credential</span>
+                <span>Awarded to 100% of Verified Attending Participants</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>Official HACKORA 2026 Builder Kit (T-Shirt & Badges)</span>
+                <span>Official VTU-Affiliated Institutional Certification</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>Talent Directory inclusion shared with hiring partners</span>
+                <span>Valid Academic Credential signed by College Principal & HOD</span>
               </div>
             </div>
           </SpotlightCard>

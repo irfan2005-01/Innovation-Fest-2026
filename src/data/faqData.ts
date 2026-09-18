@@ -41,7 +41,7 @@ export const faqData: FAQItem[] = [
     category: 'Logistics',
     question: 'What should we bring with us to the LAEC campus?',
     answer:
-      'Every team member must bring their physical College ID card (or USN credentials), personal laptops, chargers, and spike-guard extension cords. If you are participating in hardware tracks or Project Expo, bring all microcontrollers (Arduino, ESP32, Raspberry Pi), sensors, and interface cables.',
+      'Every team member must bring their physical College ID card (or USN credentials), personal laptops, chargers, and spike-guard extension cords. For Project Expo and Hackathon, you can demonstrate software projects (web apps, mobile apps, AI models, full-stack systems) on your laptops, or bring hardware setups (microcontrollers, sensors, IoT components) if you are demonstrating a hardware project. Projects across all branches (CSE, ISE, ECE, Mech, Civil, etc.) are welcome!',
   },
   {
     id: 'faq-7',

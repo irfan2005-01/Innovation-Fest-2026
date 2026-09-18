@@ -80,7 +80,7 @@ export const HospitalityPage: React.FC<HospitalityPageProps> = ({ onNavigate, on
             <div>
               <h4 className="text-sm font-bold text-white font-display">Working Prototype / Device</h4>
               <p className="text-xs text-slate-400 mt-1 leading-relaxed font-sans">
-                Laptops, IoT sensors, microcontrollers, and chargers ready for live interactive testing and scrutiny.
+                Laptops running your software applications, or hardware/IoT setups and chargers ready for live interactive demonstration.
               </p>
             </div>
           </div>
