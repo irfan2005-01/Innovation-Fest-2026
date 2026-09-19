@@ -67,7 +67,7 @@ export const RegistrationBanner: React.FC<RegistrationBannerProps> = ({ onOpenRe
             </div>
 
             <p className="text-xs font-mono text-slate-400 mt-4">
-              Official State-Level Celebration • ₹45,000+ Prize Pool • Certificates for all verified participants
+              Official State-Level Celebration • ₹45,000+ Prize Pool • E-certificates will be provided for all participants
             </p>
           </div>
         </div>

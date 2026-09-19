@@ -161,7 +161,7 @@ export const Prizes: React.FC = () => {
                   </div>
 
                   <div className="mt-4 pt-3 border-t border-slate-800/80 text-[11px] font-mono text-slate-500">
-                    Official citation plaque + VTU honor certificate
+                    Official citation plaque + Honor certificate
                   </div>
                 </motion.div>
               );
@@ -183,13 +183,13 @@ export const Prizes: React.FC = () => {
               </div>
               <div>
                 <span className="text-xs font-mono text-nexora-cyan uppercase tracking-wider">
-                  Universal Builder Credential
+                  Universal Builder Recognition
                 </span>
                 <h3 className="text-xl sm:text-2xl font-bold font-display text-white mt-1">
-                  Official VTU-Affiliated Participation Certificate
+                  E-Certificates for All Participants
                 </h3>
                 <p className="text-sm text-slate-300 mt-1 max-w-2xl">
-                  Every active participant who commits code and participates in the live demonstration rounds receives an official authenticated certificate issued by LAEC Bidar under Visvesvaraya Technological University (VTU) guidelines.
+                  E-certificates will be provided to all verified participants who commit code and participate in the live demonstration rounds, issued by Lingaraj Appa Engineering College (LAEC), Bidar.
                 </p>
               </div>
             </div>

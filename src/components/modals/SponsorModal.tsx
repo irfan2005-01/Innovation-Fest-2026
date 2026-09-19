@@ -57,7 +57,7 @@ AUDIENCE & REACH:
 PARTNERSHIP TIERS:
 1. PLATINUM PARTNER (Title Tech Partner) - ₹75,000 / In-kind Equivalent
    - Arena Mainstage Naming Rights
-   - Logo on all VTU Certificates & Winner Trophies
+   - Logo on all Official E-Certificates & Winner Citations
    - Keynote Speaker Slot at Inauguration (15 Mins)
    - Exclusive On-Campus Recruitment & Technical Booth
    - Complete Opt-in Resume Directory of all Participants

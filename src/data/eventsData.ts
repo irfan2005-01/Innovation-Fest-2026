@@ -20,9 +20,9 @@ export const eventsData: EventItem[] = [
     highlights: [
       'Open innovation tracks across 6 official themes',
       'Continuous mentorship sessions throughout the 24-hour sprint',
-      '1st Prize: ₹25,000 + Gold Trophy | 2nd Prize: ₹10,000 + Silver Trophy',
+      '1st Prize: ₹25,000 | 2nd Prize: ₹10,000',
       'Direct pitch opportunities to startup incubators and VC networks',
-      'Official VTU-affiliated Certificate of Participation for all verified builders',
+      'E-certificates will be provided for all verified participants',
     ],
     rules: [
       'Each team must consist of 2–4 members (inter-college teams permitted).',
@@ -53,7 +53,7 @@ export const eventsData: EventItem[] = [
       'Present to industry leaders and academic evaluators on 22 September',
       'Refine problem definition, market feasibility, and execution roadmap',
       '1st Prize: ₹3,000 | 2nd Prize: ₹2,000',
-      'Official Certificate of Participation for all presenters',
+      'E-certificates will be provided for all presenters',
     ],
     rules: [
       'Each team must consist of 1–2 members.',
@@ -84,7 +84,7 @@ export const eventsData: EventItem[] = [
       'Live interactive demonstration before visiting jury panels',
       'Open to all domains: Software apps, AI/ML models, IoT systems, and working prototypes across all branches',
       '1st Prize: ₹3,000 | 2nd Prize: ₹2,000',
-      'Official Certificate of Participation for all exhibitors',
+      'E-certificates will be provided for all exhibitors',
     ],
     rules: [
       'Each team must consist of 1–2 members.',
@@ -117,8 +117,8 @@ export const consolidatedPrizes = {
       name: 'HACKORA 2026',
       category: '24-Hour National Hackathon',
       pool: '₹35,000',
-      firstPrize: '₹25,000 + Gold Trophy',
-      secondPrize: '₹10,000 + Silver Trophy',
+      firstPrize: '₹25,000 Cash Grant',
+      secondPrize: '₹10,000 Cash Grant',
       color: 'cyan',
     },
     {
@@ -140,6 +140,6 @@ export const consolidatedPrizes = {
       color: 'emerald',
     },
   ] as TrackPrizeInfo[],
-  certificateNote: 'Official Certificate of Participation for all verified participants across all tracks.',
+  certificateNote: 'E-certificates will be provided to all verified participants across all tracks.',
 };
 

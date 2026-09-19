@@ -123,9 +123,9 @@ export const timelineData: TimelineItem[] = [
     time: '05:00 PM',
     title: 'Valedictory & Grand Prize Distribution Ceremony',
     description:
-      'Honoring champion teams across Hackora, Ideathon, and Project Expo with ₹45,000+ cash prizes, trophies, and official VTU Certificates of Participation.',
+      'Honoring champion teams across Hackora, Ideathon, and Project Expo with ₹45,000+ cash prizes, and E-certificates will be provided to all participants.',
     type: 'ceremony',
     status: 'upcoming',
-    tags: ['Valedictory', 'Cash Prizes', 'VTU Certificates'],
+    tags: ['Valedictory', 'Cash Prizes', 'E-Certificates'],
   },
 ];

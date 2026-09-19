@@ -252,10 +252,10 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onNavigate, onOpenRegist
             <span>OFFICIAL TRACK AWARDS // 1ST & 2ND PRIZES ONLY</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-bold font-display text-white">
-            ₹45,000+ Total Cash Grants & Trophies
+            ₹45,000+ Total Cash Grants
           </h3>
           <p className="text-xs text-slate-400 font-mono mt-1">
-            Excellence awards for 1st & 2nd place squads, plus official VTU-affiliated Certificate of Participation for every verified participant.
+            Excellence awards for 1st & 2nd place squads, plus E-certificates will be provided for every verified participant.
           </p>
         </div>
 
@@ -351,10 +351,10 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onNavigate, onOpenRegist
             </div>
             <div>
               <div className="text-xs font-bold text-white font-mono uppercase tracking-wider">
-                Universal Certificate of Participation
+                E-Certificates Will Be Provided
               </div>
               <div className="text-[11px] text-slate-400 font-mono">
-                Awarded to every verified participant who presents their project live on 21–22 September 2026.
+                E-certificates will be provided to every verified participant who presents their project live on 21–22 September 2026.
               </div>
             </div>
           </div>

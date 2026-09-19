@@ -8,7 +8,6 @@ import {
   Calendar,
   MapPin,
   ArrowRight,
-  ShieldCheck,
   Activity,
   Sparkles,
   ChevronRight,
@@ -69,9 +68,9 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
     },
     highlights: [
       '24 hours continuous hacking at Central Computing Arena, LAEC',
-      '1st Prize: ₹25,000 + Gold Trophy | 2nd Prize: ₹10,000 + Silver Trophy',
+      '1st Prize: ₹25,000 | 2nd Prize: ₹10,000',
       'Free overnight computing labs, high-speed Wi-Fi, and refreshments',
-      'Official VTU-recognized Certificate of Participation for all builders',
+      'E-certificates will be provided for all participants',
     ],
     terminalLogs: [
       'sys: arena_grid_online [24:00:00 SPRINT CLOCK ARMED]',
@@ -105,7 +104,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
       'Present problem-solving decks directly to industry leaders on 22 Sep',
       'Refine market viability, monetization, and technical roadmaps',
       '1st Prize: ₹3,000 | 2nd Prize: ₹2,000',
-      'Official Certificate of Participation for every presenter',
+      'E-certificates will be provided for all presenters',
     ],
     terminalLogs: [
       'sys: pitch_auditorium initialized [STAGE_A]',
@@ -139,7 +138,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
       'Dedicated exhibition booth with power outlets, Wi-Fi, and display space',
       'Demonstrate working software apps, AI/ML systems, or IoT models live',
       '1st Prize: ₹3,000 | 2nd Prize: ₹2,000',
-      'Official Certificate of Participation for all squad members',
+      'E-certificates will be provided for all squad members',
     ],
     terminalLogs: [
       'sys: expo_hall configured [STALL_SLOTS_ALLOCATED]',
@@ -381,7 +380,7 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
                 </ul>
 
                 {/* Quick Track Metrics Strip */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 font-mono text-xs">
+                <div className="grid grid-cols-2 gap-3 pt-1 font-mono text-xs">
                   <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
                     <span className="text-[10px] text-slate-400 block uppercase">Prize Pool</span>
                     <span className="font-bold text-amber-300 text-sm">{current.prizePool}</span>
@@ -389,13 +388,6 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
                   <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
                     <span className="text-[10px] text-slate-400 block uppercase">1st Prize</span>
                     <span className={`font-bold text-sm ${current.color.text}`}>{current.firstPrize}</span>
-                  </div>
-                  <div className="col-span-2 sm:col-span-1 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block uppercase">Credentials</span>
-                    <span className="font-bold text-slate-200 text-xs flex items-center gap-1 mt-0.5">
-                      <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>VTU Verified</span>
-                    </span>
                   </div>
                 </div>
 
@@ -596,7 +588,7 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
               <span className="text-slate-600">//</span>
               <span className="text-emerald-400 font-bold">VTU AFFILIATED & LAEC HOSTED</span>
               <span className="text-slate-600">//</span>
-              <span>CERTIFICATES OF PARTICIPATION FOR ALL BUILDERS</span>
+              <span>E-CERTIFICATES WILL BE PROVIDED FOR ALL PARTICIPANTS</span>
               <span className="text-slate-600">//</span>
               <span>NO MIDWAY ELIMINATIONS</span>
               {/* Duplicate for seamless infinite loop */}
@@ -611,7 +603,7 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
               <span className="text-slate-600">//</span>
               <span className="text-emerald-400 font-bold">VTU AFFILIATED & LAEC HOSTED</span>
               <span className="text-slate-600">//</span>
-              <span>CERTIFICATES OF PARTICIPATION FOR ALL BUILDERS</span>
+              <span>E-CERTIFICATES WILL BE PROVIDED FOR ALL PARTICIPANTS</span>
             </motion.div>
           </div>
         </div>

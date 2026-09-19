@@ -48,7 +48,7 @@ export const faqData: FAQItem[] = [
     category: 'Judging',
     question: 'Will all participants receive certificates?',
     answer:
-      'Yes! Every verified participant who attends the offline event and completes their demonstration will receive an official, authenticated Certificate of Participation recognized under VTU guidelines, alongside special trophies and cash grants for winning teams.',
+      'Yes! E-certificates will be provided to all verified participants who attend the offline event and complete their project demonstration, alongside direct cash prizes for winning squads.',
   },
   {
     id: 'faq-8',
