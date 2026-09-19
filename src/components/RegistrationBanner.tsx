@@ -25,7 +25,7 @@ export const RegistrationBanner: React.FC<RegistrationBannerProps> = ({ onOpenRe
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-xs font-mono text-nexora-orange mb-6 shadow-sm"
             >
               <span className="w-2 h-2 rounded-full bg-nexora-orange animate-ping" />
-              <span>REGISTRATION OPEN TILL 19 SEPTEMBER // STRICT CAP AT 50 TEAMS</span>
+              <span>REGISTRATION OPEN TILL 20 SEPTEMBER // STRICT CAP AT 50 TEAMS</span>
             </motion.div>
 
             {/* Banner Big Headline */}
@@ -61,7 +61,7 @@ export const RegistrationBanner: React.FC<RegistrationBannerProps> = ({ onOpenRe
                 onClick={onOpenRegister}
                 className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold font-mono text-sm tracking-wide text-slate-950 bg-brand-gradient hover:opacity-95 shadow-xl shadow-cyan-500/25 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 group"
               >
-                <span>Register & Pay Online (Deadline: 19 Sep 2026)</span>
+                <span>Register & Pay Online (Deadline: 20 Sep 2026)</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
