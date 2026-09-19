@@ -121,7 +121,7 @@ const BRANCH_OPTIONS = [
   'EEE - Electrical & Electronics',
   'AIML - Artificial Intelligence & ML',
   'AIDS - AI & Data Science',
-  'OTHER - Other Department',
+  'OTHER - Other Branch / Stream',
 ];
 
 export const RegistrationModal: React.FC<RegistrationModalProps> = ({
@@ -755,7 +755,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
 
                     <div>
                       <label className="block text-[11px] font-mono text-slate-300 mb-1">
-                        Department & Year *
+                        Branch & Year *
                       </label>
                       <div className="grid grid-cols-2 gap-1.5">
                         <select

@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
   Trophy,
-  ShieldCheck,
   ArrowRight,
   Calendar,
   MapPin,
@@ -40,7 +39,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/80 backdrop-blur-md mb-6 shadow-lg shadow-cyan-500/5">
           <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
           <span className="text-xs font-mono font-semibold tracking-wider text-slate-300 uppercase">
-            LAEC Bidar • Dept. of Computer Science & Engineering
+            Lingaraj Appa Engineering College, Bidar
           </span>
         </div>
 
@@ -156,7 +155,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="text-center max-w-2xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-xs font-mono text-amber-400 mb-3">
             <Trophy className="w-3.5 h-3.5 text-amber-400" />
-            <span>EXCELLENCE CITATION & CREDENTIALS</span>
+            <span>HONORS & REWARDS</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold font-display text-white">
             Grand Honors & Rewards
@@ -211,11 +210,11 @@ export const HomePage: React.FC<HomePageProps> = ({
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>The Prestigious HACKORA 2026 Winner Gold & Runner-Up Silver Trophies</span>
+                <span>₹45,000+ Total Direct Cash Pool across HACKORA, Ideathon & Project Expo</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                <span>Official Winner Citation Certificates signed by LAEC & VTU</span>
+                <span>Winner Citation E-Certificates issued to champion squads</span>
               </div>
             </div>
           </SpotlightCard>
@@ -231,8 +230,8 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div>
               <div className="flex items-center justify-between mb-4">
                 <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>UNIVERSAL CREDENTIAL</span>
+                  <Award className="w-3.5 h-3.5" />
+                  <span>E-CERTIFICATES</span>
                 </span>
                 <div className="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-md shadow-cyan-500/20">
                   <Award className="w-6 h-6" />
@@ -241,30 +240,30 @@ export const HomePage: React.FC<HomePageProps> = ({
 
               <div className="my-3">
                 <h3 className="text-2xl sm:text-3xl font-extrabold font-display text-white">
-                  Official Certificates for All Participants
+                  E-Certificates for All Participants
                 </h3>
                 <div className="text-xs font-mono text-cyan-300/80 mt-1 uppercase tracking-wider font-semibold">
-                  VTU-Affiliated Institutional Recognition
+                  E-certificates will be provided to all verified participants
                 </div>
               </div>
 
               <p className="text-sm text-slate-300 font-sans leading-relaxed mt-4">
-                Every verified participant who takes part in Innovation Fest 2026 and presents their live demo receives an official, authenticated Certificate of Participation issued under Visvesvaraya Technological University (VTU) guidelines.
+                Every verified participant who takes part in Innovation Fest 2026 and presents their live project demonstration will receive an official E-Certificate of Participation issued by Lingaraj Appa Engineering College (LAEC), Bidar.
               </p>
             </div>
 
             <div className="pt-6 mt-6 border-t border-slate-800 space-y-2 text-xs font-mono text-slate-300">
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>Awarded to 100% of Verified Attending Participants</span>
+                <span>E-certificates will be provided to 100% of attending participants</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>Official VTU-Affiliated Institutional Certification</span>
+                <span>Authenticated digital credential with verifiable token</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>Valid Academic Credential signed by College Principal & HOD</span>
+                <span>Issued directly by Lingaraj Appa Engineering College (LAEC), Bidar</span>
               </div>
             </div>
           </SpotlightCard>

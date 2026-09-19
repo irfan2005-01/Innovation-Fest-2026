@@ -670,7 +670,7 @@ export const ManualRegistrationModal: React.FC<ManualRegistrationModalProps> = (
                 </div>
 
                 <div>
-                  <label className="block text-[11px] text-slate-300 mb-1">Branch / Dept</label>
+                  <label className="block text-[11px] text-slate-300 mb-1">Branch / Stream</label>
                   <input
                     type="text"
                     value={branch}
