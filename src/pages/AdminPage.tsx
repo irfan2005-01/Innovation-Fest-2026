@@ -26,6 +26,7 @@ import {
   UserPlus,
   MapPin,
   MapPinCheck,
+  CheckCheck,
 } from 'lucide-react';
 import {
   fetchAllPayments,
@@ -227,6 +228,25 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
     setTimeout(() => setActionSuccessMessage(null), 3500);
   };
 
+  const handleVerifyAndArrive = async (id: string) => {
+    const record = records.find((r) => r.id === id);
+    const arrivedAt = new Date().toISOString();
+    setRecords((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, status: 'verified', arrived: true, arrivedAt } : r))
+    );
+    if (selectedRecord && selectedRecord.id === id) {
+      setSelectedRecord({ ...selectedRecord, status: 'verified', arrived: true, arrivedAt });
+    }
+    try {
+      await updatePaymentStatus(id, 'verified');
+      await updatePaymentArrival(id, true);
+      setActionSuccessMessage(`✓ Verified payment & checked in "${record?.teamName || 'Contestant'}"!`);
+    } catch (err: any) {
+      console.error('Verify & Arrive error:', err);
+    }
+    setTimeout(() => setActionSuccessMessage(null), 3500);
+  };
+
   const handleDelete = async (id: string, teamName: string) => {
     if (window.confirm(`Are you sure you want to delete registration for "${teamName}"?`)) {
       await deletePaymentRecord(id);
@@ -276,7 +296,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
       r.payerName?.toLowerCase().includes(q) ||
       r.payerUpiId?.toLowerCase().includes(q) ||
       r.registrationToken?.toLowerCase().includes(q) ||
-      r.collegeName?.toLowerCase().includes(q);
+      r.collegeName?.toLowerCase().includes(q) ||
+      r.members?.some(
+        (m) =>
+          m.name?.toLowerCase().includes(q) ||
+          m.usn?.toLowerCase().includes(q) ||
+          m.phone?.toLowerCase().includes(q) ||
+          m.email?.toLowerCase().includes(q)
+      );
 
     const matchesEvent =
       selectedEvent === 'all' ||
@@ -739,7 +766,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by Team Name, Leader, USN, Phone, UTR, Payer..."
+              placeholder="Search by Team Name, Leader, Member, USN, Phone, Token, UTR..."
               className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-xs focus:border-cyan-400 focus:outline-none"
             />
             {searchQuery && (
@@ -1033,7 +1060,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                             </button>
                           )}
 
-                          {!isVerified && (
+                          {!isVerified && !r.arrived ? (
+                            <button
+                              onClick={() => handleVerifyAndArrive(r.id)}
+                              className="px-2 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[10px] font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95"
+                              title="1-Click: Verify Payment AND Mark Arrived"
+                            >
+                              <CheckCheck className="w-3 h-3" />
+                              <span>Verify & Arrive</span>
+                            </button>
+                          ) : !isVerified ? (
                             <button
                               onClick={() => handleStatusChange(r.id, 'verified')}
                               className="px-2 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold transition-colors"
@@ -1041,7 +1077,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                             >
                               Verify
                             </button>
-                          )}
+                          ) : null}
 
                           {!isRejected && (
                             <button
