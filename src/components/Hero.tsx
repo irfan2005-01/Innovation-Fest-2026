@@ -146,9 +146,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenRegister }) => {
         >
           <button
             onClick={onOpenRegister}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold font-mono text-sm tracking-wide text-slate-950 bg-brand-gradient hover:opacity-95 shadow-xl shadow-cyan-500/25 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 group"
+            className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold font-mono text-sm tracking-wide text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 group"
           >
-            <span>Register & Pay Online</span>
+            <span className="w-2 h-2 rounded-full bg-red-400" />
+            <span>Registrations Closed (Event Day Notice)</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </motion.div>

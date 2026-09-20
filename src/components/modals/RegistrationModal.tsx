@@ -20,6 +20,7 @@ import {
   GraduationCap,
   Sparkles,
   ExternalLink,
+  Calendar,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import {
@@ -123,6 +124,8 @@ const BRANCH_OPTIONS = [
   'AIDS - AI & Data Science',
   'OTHER - Other Branch / Stream',
 ];
+
+export const IS_REGISTRATION_CLOSED = true;
 
 export const RegistrationModal: React.FC<RegistrationModalProps> = ({
   isOpen,
@@ -389,10 +392,18 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                   <h2 className="text-sm sm:text-lg md:text-xl font-black font-display text-white tracking-wide truncate">
-                    OFFICIAL REGISTRATION
+                    {IS_REGISTRATION_CLOSED && step !== 'receipt' && step !== 'history'
+                      ? 'REGISTRATIONS CLOSED'
+                      : 'OFFICIAL REGISTRATION'}
                   </h2>
-                  <span className="text-[9px] sm:text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                    2026
+                  <span
+                    className={`text-[9px] sm:text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                      IS_REGISTRATION_CLOSED
+                        ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                        : 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30'
+                    }`}
+                  >
+                    {IS_REGISTRATION_CLOSED ? 'CAPACITY REACHED' : '2026'}
                   </span>
                 </div>
                 <p className="text-[10px] sm:text-xs text-slate-400 font-mono mt-0.5 truncate">
@@ -409,8 +420,14 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
                   className="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-[10px] sm:text-[11px] font-mono text-cyan-400 flex items-center gap-1 sm:gap-1.5 transition-colors"
                 >
                   <FileText className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  <span className="hidden sm:inline">{step === 'history' ? 'New Form' : `Receipts (${storedRecords.length})`}</span>
-                  <span className="sm:hidden">{step === 'history' ? 'Form' : `(${storedRecords.length})`}</span>
+                  <span className="hidden sm:inline">
+                    {step === 'history'
+                      ? IS_REGISTRATION_CLOSED
+                        ? 'Notice'
+                        : 'New Form'
+                      : `Receipts (${storedRecords.length})`}
+                  </span>
+                  <span className="sm:hidden">{step === 'history' ? 'Info' : `(${storedRecords.length})`}</span>
                 </button>
               )}
               <button
@@ -425,7 +442,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
           </div>
 
           {/* Step Indicator Progress Bar */}
-          {step !== 'history' && (
+          {step !== 'history' && !IS_REGISTRATION_CLOSED && (
             <div className="pt-2 sm:pt-3 pb-2 shrink-0">
               <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-slate-400 mb-1.5">
                 <span className={step === 'details' ? 'text-cyan-400 font-bold' : ''}>
@@ -463,9 +480,104 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
           {/* Scrollable Form Content */}
           <div className="flex-1 overflow-y-auto pr-1 space-y-4 py-2">
             {/* ---------------------------------------------------- */}
+            {/* REGISTRATIONS OFFICIALLY CLOSED NOTICE */}
+            {/* ---------------------------------------------------- */}
+            {IS_REGISTRATION_CLOSED && (step === 'details' || step === 'payment') && (
+              <div className="space-y-6 py-2">
+                {/* Status Hero Card */}
+                <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-slate-900/90 via-slate-900/95 to-slate-950 border border-slate-800 text-center relative overflow-hidden shadow-2xl">
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-red-500/10 rounded-bl-full pointer-events-none" />
+
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/15 border border-red-500/30 text-red-300 text-xs font-mono font-bold uppercase tracking-wider mb-4">
+                    <span className="w-2 h-2 rounded-full bg-red-400" />
+                    <span>REGISTRATIONS OFFICIALLY CLOSED</span>
+                  </div>
+
+                  <h3 className="text-2xl sm:text-3xl font-extrabold font-display text-white tracking-tight">
+                    Innovation Fest 2026 Capacity Reached
+                  </h3>
+
+                  <p className="text-sm text-slate-300 font-sans max-w-xl mx-auto mt-3 leading-relaxed">
+                    Online registrations for <strong>HACKORA 2026</strong>, <strong>IDEATHON 2026</strong>, and <strong>PROJECT EXPO 2026</strong> have officially closed as of 20 September 11:59 PM IST. All slots across our computing labs and maker arenas are fully booked.
+                  </p>
+
+                  {/* Registered Contestant Action Buttons */}
+                  <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+                    {storedRecords.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setStep('history')}
+                        className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold transition-all shadow-md shadow-cyan-500/20 flex items-center gap-2"
+                      >
+                        <FileText className="w-4 h-4" />
+                        <span>View My Entry Pass & Receipts ({storedRecords.length})</span>
+                      </button>
+                    )}
+
+                    <a
+                      href="https://chat.whatsapp.com/KHE6DJo1fu0IrNtfjuLO50"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-mono font-bold transition-all shadow-md shadow-emerald-500/20 flex items-center gap-2"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Join Participants WhatsApp Group</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Important Event Day Instructions for Registered Contestants */}
+                <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
+                  <div className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-cyan-400" />
+                    <span>Event Day Instructions for Confirmed Teams:</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+                    <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-1">
+                      <div className="text-slate-400 text-[10px] uppercase">Reporting Time</div>
+                      <div className="text-white font-bold text-sm">09:00 AM IST</div>
+                      <div className="text-slate-400 text-[11px]">Monday, 21 September 2026</div>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-1">
+                      <div className="text-slate-400 text-[10px] uppercase">Reporting Venue</div>
+                      <div className="text-white font-bold text-sm">Central Computing Arena</div>
+                      <div className="text-slate-400 text-[11px]">LAEC Campus, Bidar</div>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-1">
+                      <div className="text-slate-400 text-[10px] uppercase">What to Bring</div>
+                      <div className="text-white font-bold text-sm">College IDs & Laptops</div>
+                      <div className="text-slate-400 text-[11px]">Chargers, extension cords & IDs</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* On-Spot & Secretariat Notice */}
+                <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 text-xs font-mono text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+                  <div>
+                    <span className="text-white font-bold">Have an urgent query or arriving from outside Bidar?</span>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Please visit the Event Secretariat Desk (Counter 3) at the venue upon arrival.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors shrink-0"
+                  >
+                    Back to Portal
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ---------------------------------------------------- */}
             {/* STEP 1: EVENT-SPECIFIC REGISTRATION DETAILS */}
             {/* ---------------------------------------------------- */}
-            {step === 'details' && (
+            {!IS_REGISTRATION_CLOSED && step === 'details' && (
               <form onSubmit={handleDetailsSubmit} className="space-y-4">
                 {/* 1. Event Selector Tabs */}
                 <div>
@@ -916,7 +1028,7 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({
             {/* ---------------------------------------------------- */}
             {/* STEP 2: INSTANT UPI PAYMENT & UTR SUBMISSION */}
             {/* ---------------------------------------------------- */}
-            {step === 'payment' && (
+            {!IS_REGISTRATION_CLOSED && step === 'payment' && (
               <PaymentCard
                 event={paymentEvent}
                 teamName={teamName}

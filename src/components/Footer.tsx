@@ -60,9 +60,9 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="flex items-center gap-3 pt-2">
               <button
                 onClick={onOpenRegister}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold transition-all shadow-md shadow-cyan-500/20"
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white border border-slate-700 text-xs font-mono font-bold transition-all shadow-md"
               >
-                Register & Pay Online
+                Registrations Closed
               </button>
             </div>
 

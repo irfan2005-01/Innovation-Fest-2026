@@ -22,10 +22,10 @@ export const RegistrationBanner: React.FC<RegistrationBannerProps> = ({ onOpenRe
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-xs font-mono text-nexora-orange mb-6 shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 text-xs font-mono text-red-400 mb-6 shadow-sm"
             >
-              <span className="w-2 h-2 rounded-full bg-nexora-orange animate-ping" />
-              <span>REGISTRATION OPEN TILL 20 SEPTEMBER // STRICT CAP AT 50 TEAMS</span>
+              <span className="w-2 h-2 rounded-full bg-red-400" />
+              <span>REGISTRATIONS CLOSED // CAPACITY REACHED</span>
             </motion.div>
 
             {/* Banner Big Headline */}
@@ -59,9 +59,9 @@ export const RegistrationBanner: React.FC<RegistrationBannerProps> = ({ onOpenRe
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={onOpenRegister}
-                className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold font-mono text-sm tracking-wide text-slate-950 bg-brand-gradient hover:opacity-95 shadow-xl shadow-cyan-500/25 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 group"
+                className="w-full sm:w-auto px-8 py-4 rounded-xl font-bold font-mono text-sm tracking-wide text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 group"
               >
-                <span>Register & Pay Online (Deadline: 20 Sep 2026)</span>
+                <span>Registrations Closed (View Event Guidelines)</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>

@@ -191,9 +191,10 @@ export const SchedulePage: React.FC<SchedulePageProps> = ({ onNavigate, onOpenRe
 
         <button
           onClick={onOpenRegister}
-          className="px-6 py-3 rounded-xl font-mono text-xs font-bold text-slate-950 bg-brand-gradient hover:opacity-95 shadow-md shadow-cyan-500/20 transition-all"
+          className="px-6 py-3 rounded-xl font-mono text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 shadow-md transition-all flex items-center gap-1.5"
         >
-          Register for HACKORA 2026
+          <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+          <span>Registrations Closed (Event Notice)</span>
         </button>
       </div>
     </div>

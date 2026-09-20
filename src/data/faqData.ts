@@ -34,7 +34,7 @@ export const faqData: FAQItem[] = [
     category: 'General',
     question: 'When do registrations close and what are the registration fees?',
     answer:
-      'Official registrations close on 20 September 2026 at 11:59 PM IST (students can register through the entire day of 20 September). The entry fees are: HACKORA 2026: ₹1,200 per team; IDEATHON 2026: ₹250 per team; PROJECT EXPO 2026: ₹250 per team. Registration includes campus access, meals, Wi-Fi, builder kits, and certificates.',
+      'Official online registrations closed on 20 September 2026 at 11:59 PM IST. All tracks (HACKORA 2026, IDEATHON 2026, and PROJECT EXPO 2026) have reached full venue capacity. For confirmed participants, check-in starts at 09:00 AM on 21 September at the Central Computing Arena, LAEC Campus, Bidar.',
   },
   {
     id: 'faq-6',

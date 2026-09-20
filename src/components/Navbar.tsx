@@ -96,11 +96,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={onOpenRegister}
                 className="relative group overflow-hidden rounded-full p-[1px] focus:outline-none"
               >
-                <span className="absolute inset-0 bg-brand-gradient rounded-full group-hover:scale-105 transition-transform duration-300 blur-[2px] opacity-80 group-hover:opacity-100" />
-                <span className="relative flex items-center gap-1.5 px-4 py-2 rounded-full bg-obsidian-950 group-hover:bg-opacity-90 text-white text-xs font-semibold font-mono tracking-wide transition-colors">
-                  <span className="w-1.5 h-1.5 rounded-full bg-nexora-cyan animate-pulse" />
-                  <span>Register & Pay</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-nexora-cyan group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <span className="absolute inset-0 bg-slate-750 rounded-full border border-slate-700 opacity-80" />
+                <span className="relative flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-900/90 text-slate-300 hover:text-white text-xs font-semibold font-mono tracking-wide transition-colors">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                  <span>Registrations Closed</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </span>
               </button>
             </div>
@@ -170,9 +170,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     setMobileMenuOpen(false);
                     onOpenRegister();
                   }}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold text-slate-950 bg-brand-gradient shadow-lg shadow-cyan-500/20"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-mono text-xs font-bold text-slate-200 bg-slate-900 border border-slate-750 hover:bg-slate-850 shadow-lg"
                 >
-                  <span>Register & Pay Online (Deadline: 20 Sep)</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                  <span>Registrations Closed (Event Notice)</span>
                   <ArrowUpRight className="w-4 h-4" />
                 </button>
               </div>

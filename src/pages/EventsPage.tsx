@@ -164,9 +164,9 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onNavigate, onOpenRegist
                   </div>
                   <button
                     onClick={onOpenRegister}
-                    className={`px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shadow-md flex items-center gap-2 ${colors.btnBg}`}
+                    className="px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shadow-md flex items-center gap-2 bg-slate-850 hover:bg-slate-800 text-slate-200 border border-slate-750"
                   >
-                    <span>Register for {event.name.split(' ')[0]}</span>
+                    <span>Registrations Closed</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -376,9 +376,10 @@ export const EventsPage: React.FC<EventsPageProps> = ({ onNavigate, onOpenRegist
 
           <button
             onClick={onOpenRegister}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-gradient hover:opacity-95 text-slate-950 font-mono text-xs font-bold transition-all shadow-md shadow-cyan-500/20"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-mono text-xs font-bold transition-all shadow-md"
           >
-            <span>Register & Pay Online</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+            <span>Registrations Closed (View Info)</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

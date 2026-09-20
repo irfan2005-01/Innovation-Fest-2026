@@ -70,9 +70,10 @@ export const HomePage: React.FC<HomePageProps> = ({
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.96 }}
             onClick={onOpenRegister}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-sm font-bold text-slate-950 bg-brand-gradient hover:opacity-95 shadow-xl shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+            className="w-full sm:w-auto px-8 py-4 rounded-xl font-mono text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 shadow-xl transition-all flex items-center justify-center gap-2 group cursor-pointer"
           >
-            <span>Register & Pay Online</span>
+            <span className="w-2 h-2 rounded-full bg-red-400" />
+            <span>Registrations Closed (Event Notice)</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </motion.button>
 
@@ -333,9 +334,9 @@ export const HomePage: React.FC<HomePageProps> = ({
 
                 <button
                   onClick={onOpenRegister}
-                  className="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-mono font-bold"
+                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-bold border border-slate-700"
                 >
-                  Register
+                  Closed
                 </button>
               </div>
             </div>

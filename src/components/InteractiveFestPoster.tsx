@@ -77,7 +77,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
       'net: dedicated_gigabit_link connected to computing_arena',
       'lab: hardware_kits & IoT_stations accessible 24/7',
       'eval: live jury inspection scheduled at checkpoints',
-      'status: REGISTRATION_OPEN // 50 TEAM CAPACITY CAP',
+      'status: REGISTRATION_CLOSED // CAPACITY REACHED',
     ],
     tags: ['AI & LLMs', 'Embedded IoT', 'Full-Stack Web3', 'Cyber Defense', 'Robotics'],
   },
@@ -111,7 +111,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
       'eval: criteria: [originality: 30%, market_fit: 35%, clarity: 35%]',
       'deck: slides_projection_aspect_ratio: 16:9 supported',
       'jury: academic researchers & startup mentors on panel',
-      'status: REGISTRATION_OPEN // OPEN INNOVATION TRACKS',
+      'status: REGISTRATION_CLOSED // OPEN INNOVATION TRACKS FULL',
     ],
     tags: ['Smart Healthcare', 'Agritech', 'Fintech Vision', 'Clean Energy', 'EdTech'],
   },
@@ -145,7 +145,7 @@ const TRACKS: Record<TrackKey, TrackDetail> = {
       'pwr: 230V AC regulated supply & WiFi access at each team booth',
       'demo: live software & prototype execution before evaluating engineers',
       'scope: software applications, web/mobile, AI/ML, IoT & all engineering branches',
-      'status: REGISTRATION_OPEN // DEMO SLOTS LIMITED',
+      'status: REGISTRATION_CLOSED // ALL DEMO SLOTS ALLOCATED',
     ],
     tags: ['Web & Mobile Apps', 'AI / ML Models', 'IoT & Embedded', 'Robotics', 'All Branches'],
   },
@@ -404,7 +404,7 @@ export const InteractiveFestPoster: React.FC<InteractiveFestPosterProps> = ({
                         : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/30'
                     }`}
                   >
-                    <span>Register For {current.tabLabel}</span>
+                    <span>Registrations Closed ({current.tabLabel})</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
 
