@@ -116,6 +116,7 @@ export type PageId =
   | 'resources'
   | 'sponsors'
   | 'faq'
-  | 'admin';
+  | 'admin'
+  | 'allocation';
 
 

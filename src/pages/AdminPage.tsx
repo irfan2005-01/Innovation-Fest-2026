@@ -27,6 +27,7 @@ import {
   MapPin,
   MapPinCheck,
   CheckCheck,
+  Layers,
 } from 'lucide-react';
 import {
   fetchAllPayments,
@@ -513,6 +514,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
           >
             <UserPlus className="w-4 h-4" />
             <span>+ Manual Team Entry</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate?.('allocation')}
+            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:opacity-95 text-white font-mono text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-purple-500/25 transition-all"
+            title="Manage Theme & Problem Statement Allocations"
+          >
+            <Layers className="w-4 h-4" />
+            <span>Theme & PS Allocation</span>
           </button>
 
           <button

@@ -12,6 +12,7 @@ import { HospitalityPage } from './pages/HospitalityPage';
 import { SponsorsPage } from './pages/SponsorsPage';
 import { FAQPage } from './pages/FAQPage';
 import { AdminPage } from './pages/AdminPage';
+import { AllocationPage } from './pages/AllocationPage';
 import { RegistrationModal } from './components/modals/RegistrationModal';
 import { SponsorModal } from './components/modals/SponsorModal';
 import { PageId } from './types';
@@ -50,6 +51,7 @@ export function App() {
     'sponsors',
     'faq',
     'admin',
+    'allocation',
   ];
 
   // Read initial page from URL hash if present
@@ -171,6 +173,11 @@ export function App() {
               <AdminPage
                 onNavigate={navigateTo}
                 onOpenRegister={() => setRegisterModalOpen(true)}
+              />
+            )}
+            {currentPage === 'allocation' && (
+              <AllocationPage
+                onNavigate={navigateTo}
               />
             )}
           </motion.div>

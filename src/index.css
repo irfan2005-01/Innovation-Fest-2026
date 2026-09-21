@@ -270,8 +270,44 @@ html.light .bg-grid-pattern {
   }
 
   #print-receipt-card,
-  #print-receipt-card * {
+  #print-receipt-card *,
+  #print-allocation-ledger,
+  #print-allocation-ledger * {
     visibility: visible;
+  }
+
+  #print-allocation-ledger {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 16px 24px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    display: block !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  }
+
+  #print-allocation-ledger table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 11px !important;
+  }
+
+  #print-allocation-ledger th,
+  #print-allocation-ledger td {
+    border: 1px solid #1f2937 !important;
+    padding: 6px 8px !important;
+    color: #000000 !important;
+    page-break-inside: avoid !important;
+  }
+
+  #print-allocation-ledger th {
+    background-color: #f3f4f6 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
   }
 
   #print-receipt-card {
