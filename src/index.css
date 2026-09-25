@@ -272,8 +272,46 @@ html.light .bg-grid-pattern {
   #print-receipt-card,
   #print-receipt-card *,
   #print-allocation-ledger,
-  #print-allocation-ledger * {
+  #print-allocation-ledger *,
+  #official-printable-receipt,
+  #official-printable-receipt * {
     visibility: visible;
+  }
+
+  .print-hide {
+    display: none !important;
+  }
+
+  #official-printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 16px 20px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    display: block !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    box-shadow: none !important;
+    border: 2px solid #0f172a !important;
+    border-radius: 8px !important;
+  }
+
+  #official-printable-receipt table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  #official-printable-receipt th,
+  #official-printable-receipt td {
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+  }
+
+  #official-printable-receipt th {
+    background-color: #f1f5f9 !important;
   }
 
   #print-allocation-ledger {

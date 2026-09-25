@@ -28,6 +28,7 @@ import {
   MapPinCheck,
   CheckCheck,
   Layers,
+  FileText,
 } from 'lucide-react';
 import {
   fetchAllPayments,
@@ -43,6 +44,7 @@ import {
 import { PageId } from '../types';
 import { RotatingO } from '../components/HackoraLogo';
 import { ManualRegistrationModal } from '../components/admin/ManualRegistrationModal';
+import { OfficialReceiptModal } from '../components/admin/OfficialReceiptModal';
 
 interface AdminPageProps {
   onNavigate: (page: PageId) => void;
@@ -69,6 +71,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
 
   // Modals & Drawers
   const [selectedRecord, setSelectedRecord] = useState<PaymentRecord | null>(null);
+  const [receiptModalRecord, setReceiptModalRecord] = useState<PaymentRecord | null>(null);
   const [arrivedWarningRecord, setArrivedWarningRecord] = useState<PaymentRecord | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [showSqlModal, setShowSqlModal] = useState(false);
@@ -1089,6 +1092,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                             </button>
                           ) : null}
 
+                          {/* Official Receipt Button - Right beside Verify */}
+                          <button
+                            onClick={() => setReceiptModalRecord(r)}
+                            className="px-2 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 text-[10px] font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95"
+                            title="Download & View Official Receipt"
+                          >
+                            <FileText className="w-3 h-3" />
+                            <span>Receipt</span>
+                          </button>
+
                           {!isRejected && (
                             <button
                               onClick={() => handleStatusChange(r.id, 'rejected')}
@@ -1402,6 +1415,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
                     </button>
                   )}
 
+                  <button
+                    onClick={() => setReceiptModalRecord(selectedRecord)}
+                    className="px-3.5 py-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+                    title="Download & View Official Professional Receipt"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Official Receipt</span>
+                  </button>
+
                   {selectedRecord.status !== 'rejected' && (
                     <button
                       onClick={() => handleStatusChange(selectedRecord.id, 'rejected')}
@@ -1670,6 +1692,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ onNavigate, onOpenRegister
           setTimeout(() => setActionSuccessMessage(null), 6000);
           loadData();
         }}
+      />
+
+      {/* ---------------------------------------------------- */}
+      {/* OFFICIAL PROFESSIONAL RECEIPT MODAL */}
+      {/* ---------------------------------------------------- */}
+      <OfficialReceiptModal
+        isOpen={Boolean(receiptModalRecord)}
+        onClose={() => setReceiptModalRecord(null)}
+        record={receiptModalRecord}
       />
     </div>
   );
